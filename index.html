@@ -61,57 +61,78 @@ h1, h2, h3 { margin: 0; text-wrap: balance; }
 .intro p { margin: 0; color: var(--on-navy-muted); font-size: 17px; }
 
 .chat { max-width: 780px; margin: 0 auto; background: var(--surface); color: var(--fg); border-radius: 24px; box-shadow: 0 30px 70px rgba(5, 10, 30, .35); overflow: hidden; display: grid; }
-.chat-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.chat-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
 .who { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; }
-.avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--navy); display: grid; place-items: center; flex: 0 0 auto; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--navy); border: 1px solid rgba(232, 199, 126, .45); display: grid; place-items: center; flex: 0 0 auto; position: relative; }
 .avatar svg { width: 18px; height: 18px; }
+.avatar.live::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--gold); opacity: 0; animation: ring 1.4s ease-out infinite; }
+@keyframes ring { 0% { transform: scale(.85); opacity: .9; } 100% { transform: scale(1.25); opacity: 0; } }
 .who small { display: block; font-weight: 400; font-size: 12px; color: var(--muted); }
 .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2fb36d; margin-right: 5px; vertical-align: 1px; }
-.ghost { white-space: nowrap; flex: 0 0 auto; background: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--fg); }
-.ghost:hover { border-color: var(--gold-deep); }
-.log { height: min(52vh, 460px); overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; scroll-behavior: smooth; }
-.msg { display: flex; gap: 10px; max-width: 100%; }
-.msg .avatar { width: 28px; height: 28px; margin-top: 2px; }
-.msg .avatar svg { width: 14px; height: 14px; }
-.msg.me { justify-content: flex-end; }
-.bubble { padding: 11px 15px; border-radius: 18px; max-width: min(620px, 86%); min-width: 0; }
-.me .bubble { background: var(--navy); color: #fff; border-bottom-right-radius: 6px; }
-.bot .bubble { background: var(--bot); border-bottom-left-radius: 6px; }
-.bubble p { margin: 0; }
-.bubble p + * { margin-top: 10px; }
-.src { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 13px; }
-.src .lbl { color: var(--muted); }
-.link { background: none; border: 0; padding: 0; cursor: pointer; color: var(--accent); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-align: left; }
-details.more { font-size: 14px; }
-details.more summary { cursor: pointer; color: var(--accent); font-weight: 600; list-style: none; }
+.qcount { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.log { min-height: 300px; padding: 22px 24px 18px; display: grid; gap: 18px; align-content: start; }
+.turn { display: grid; gap: 10px; animation: rise .28s ease-out; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.turn.leaving { animation: fade .18s ease-in forwards; }
+@keyframes fade { to { opacity: 0; transform: translateY(-6px); } }
+.turn.me { justify-items: end; }
+.turn.me .q { background: var(--soft); border: 1px solid var(--line); border-radius: 18px 18px 6px 18px; padding: 10px 16px; max-width: min(560px, 90%); font-weight: 500; overflow-wrap: anywhere; }
+.turn.bot { grid-template-columns: 34px minmax(0, 1fr); column-gap: 12px; }
+.turn.bot > .avatar { grid-row: span 6; }
+.bot-name { font-size: 13px; font-weight: 700; display: flex; gap: 8px; align-items: center; }
+.status { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
+.status .shimmer { background: linear-gradient(90deg, var(--muted) 0%, var(--fg) 45%, var(--muted) 90%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 1.3s linear infinite; }
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+.status .tick { color: #2fb36d; font-weight: 700; }
+.answer { font-size: 16.5px; line-height: 1.7; min-width: 0; }
+.answer p { margin: 0; }
+.caret { display: inline-block; width: 8px; height: 1.05em; background: var(--gold-deep); vertical-align: -2px; margin-left: 2px; border-radius: 2px; animation: caret .9s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+.cite { display: inline-flex; align-items: center; gap: 10px; justify-self: start; max-width: 100%; text-align: left; background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px 8px 8px; cursor: pointer; color: var(--fg); transition: border-color .15s ease, transform .15s ease; animation: rise .3s ease-out; }
+.cite:hover { border-color: var(--gold-deep); transform: translateY(-1px); }
+.cite .tag { flex: 0 0 auto; font-size: 12px; font-weight: 700; color: #18213d; background: var(--gold); border-radius: 8px; padding: 3px 8px; font-variant-numeric: tabular-nums; }
+.cite .ct { display: grid; min-width: 0; }
+.cite .ct b { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cite .ct span { font-size: 12px; color: var(--muted); }
+.cite .open { flex: 0 0 auto; font-size: 12px; font-weight: 700; color: var(--accent); }
+details.more { font-size: 14.5px; animation: rise .3s ease-out; }
+details.more summary { cursor: pointer; color: var(--accent); font-weight: 600; list-style: none; display: inline-flex; gap: 6px; align-items: center; }
 details.more summary::-webkit-details-marker { display: none; }
-details.more summary::before { content: "+ "; }
-details.more[open] summary::before { content: "− "; }
-details.more .inner { margin-top: 10px; padding: 12px 14px; background: var(--surface); border-radius: 12px; border: 1px solid var(--line); }
+details.more summary::before { content: "▸"; transition: transform .15s ease; }
+details.more[open] summary::before { transform: rotate(90deg); }
+details.more .inner { margin-top: 10px; padding: 14px 16px; background: var(--soft); border-radius: 14px; border: 1px solid var(--line); }
 .inner p { margin: 0 0 10px; }
 .inner > :last-child { margin-bottom: 0; }
 .inner ul { margin: 0 0 10px; padding-left: 20px; }
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { background: var(--surface); border: 1.5px solid var(--line); border-radius: 999px; padding: 6px 13px; font-size: 14px; cursor: pointer; text-align: left; }
-.chip:hover { border-color: var(--gold-deep); color: var(--accent); }
-.chip.gold { background: linear-gradient(180deg, #EDCF86, var(--gold-deep)); border-color: transparent; color: #18213d; font-weight: 600; }
-.follow { margin-left: 38px; display: grid; gap: 6px; }
-.follow .hint { font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: .04em; }
-.rate { display: flex; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); }
-.rate button { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; font-size: 12px; cursor: pointer; color: var(--muted); }
-.rate button:hover { color: var(--fg); border-color: var(--gold-deep); }
-.typing { display: inline-flex; gap: 4px; padding: 4px 2px; }
-.typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: blink 1s infinite ease-in-out; }
-.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
-@keyframes blink { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
-.composer { display: flex; gap: 10px; padding: 12px; border-top: 1px solid var(--line); background: var(--surface); }
-.composer input { flex: 1; min-width: 0; font: 500 16px var(--body); color: var(--fg); background: var(--soft); border: 1.5px solid transparent; border-radius: 999px; padding: 12px 18px; }
-.composer input:focus { outline: none; border-color: var(--gold-deep); background: var(--surface); }
-.send { flex: 0 0 auto; background: linear-gradient(180deg, #EDCF86, var(--gold-deep)); border: 0; border-radius: 999px; padding: 0 20px; font-weight: 700; color: #18213d; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-.send svg { width: 16px; height: 16px; }
-.send:hover { filter: brightness(1.05); }
+.actions { display: flex; gap: 4px; align-items: center; animation: rise .3s ease-out; }
+.act { background: none; border: 0; border-radius: 8px; padding: 6px; cursor: pointer; color: var(--muted); display: grid; place-items: center; }
+.act:hover { background: var(--soft); color: var(--fg); }
+.act svg { width: 17px; height: 17px; }
+.act[aria-pressed="true"] { color: var(--accent); background: var(--soft); }
+.act-note { font-size: 12px; color: var(--muted); margin-left: 6px; }
+
+.composer { display: flex; align-items: flex-end; gap: 10px; padding: 12px; border-top: 1px solid var(--line); background: var(--surface); }
+.composer textarea { flex: 1; min-width: 0; resize: none; font: 500 16px/1.45 var(--body); color: var(--fg); background: var(--soft); border: 1.5px solid transparent; border-radius: 22px; padding: 11px 18px; max-height: 140px; overflow-y: auto; }
+.composer textarea:focus { outline: none; border-color: var(--gold-deep); background: var(--surface); box-shadow: 0 0 0 4px rgba(211, 169, 83, .15); }
+.send { flex: 0 0 auto; width: 46px; height: 46px; background: linear-gradient(180deg, #EDCF86, var(--gold-deep)); border: 0; border-radius: 50%; color: #18213d; cursor: pointer; display: grid; place-items: center; transition: transform .12s ease, filter .12s ease, opacity .12s ease; }
+.send svg { width: 18px; height: 18px; }
+.send:hover { filter: brightness(1.05); transform: scale(1.04); }
+.send:disabled { opacity: .45; cursor: default; transform: none; }
+.send .stop { display: none; width: 14px; height: 14px; background: #18213d; border-radius: 3px; }
+.send.busy svg { display: none; }
+.send.busy .stop { display: block; }
+.hintline { display: flex; justify-content: space-between; gap: 12px; padding: 0 22px 12px; font-size: 12px; color: var(--muted); background: var(--surface); }
+.hintline kbd { font: 600 11px var(--body); border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; }
 .trust { text-align: center; color: var(--on-navy-muted); font-size: 13px; margin: 14px 0 0; }
 .trust::before { content: "✦ "; color: var(--gold); }
+@media (max-width: 560px) {
+  .log { padding: 18px 16px 14px; min-height: 260px; }
+  .turn.bot { grid-template-columns: 28px minmax(0, 1fr); column-gap: 10px; }
+  .turn.bot > .avatar { width: 28px; height: 28px; }
+  .hintline .keys, .qcount { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .turn, .cite, details.more, .actions { animation: none; } .avatar.live::after, .status .shimmer, .caret { animation: none; } }
 
 /* Tables inside answers */
 .tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; margin: 4px 0 12px; background: var(--surface); }
@@ -210,17 +231,18 @@ dialog.reader::backdrop { background: rgba(10, 16, 38, .6); }
     <div class="chat" role="region" aria-label="Ask the ReachLMS guide">
       <div class="chat-top">
         <div class="who">
-          <span class="avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#E8C77E" stroke-width="2.2" stroke-linecap="round"><path d="M4 6l16 12M20 6L4 18"/></svg></span>
-          <span>ReachLMS guide<small><span class="dot"></span>Answers only from the pack</small></span>
+          <span class="avatar" id="top-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#E8C77E" stroke-width="2.2" stroke-linecap="round"><path d="M4 6l16 12M20 6L4 18"/></svg></span>
+          <span>ReachLMS guide<small><span class="dot"></span>Answers only from the due diligence pack</small></span>
         </div>
-        <button class="ghost" type="button" id="surprise">Surprise me</button>
+        <span class="qcount" id="qcount"></span>
       </div>
       <div class="log" id="log" aria-live="polite"></div>
       <form class="composer" id="composer" autocomplete="off">
         <label for="ask" class="sr">Your question</label>
-        <input id="ask" type="text" placeholder="e.g. How much would it cost us?" enterkeyhint="send">
-        <button class="send" type="submit" aria-label="Send"><span>Ask</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <textarea id="ask" rows="1" placeholder="Ask anything about ReachLMS…" enterkeyhint="send"></textarea>
+        <button class="send" id="send" type="submit" aria-label="Send question" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg><span class="stop"></span></button>
       </form>
+      <div class="hintline"><span>Each new question replaces the last answer.</span><span class="keys"><kbd>Enter</kbd> to send · <kbd>Shift</kbd>+<kbd>Enter</kbd> for a new line</span></div>
     </div>
     <p class="trust">If something isn’t in the pack, the guide says so rather than guessing.</p>
   </div>
@@ -249,7 +271,6 @@ dialog.reader::backdrop { background: rgba(10, 16, 38, .6); }
       <div class="progress" id="r-progress"></div>
       <h3 id="r-title"></h3>
       <div class="content" id="r-content"></div>
-      <div><button class="link" type="button" id="r-ask">Ask the guide about this</button></div>
     </div>
     <div class="sheet-nav">
       <button type="button" id="r-prev"><span class="dir">← Previous</span><span class="lab" id="r-prev-lab"></span></button>
@@ -1336,171 +1357,183 @@ dialog.reader::backdrop { background: rgba(10, 16, 38, .6); }
   /* ---------- Chat ---------- */
   const log = document.getElementById('log');
   const input = document.getElementById('ask');
+  const sendBtn = document.getElementById('send');
+  const topAvatar = document.getElementById('top-avatar');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let lastCard = null;
   const BOT_ICON = '<span class="avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#E8C77E" stroke-width="2.4" stroke-linecap="round"><path d="M4 6l16 12M20 6L4 18"/></svg></span>';
+  const ICONS = {
+    copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>',
+    up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v11H4V10h3zm0 0 4-7a2 2 0 0 1 3 2l-1 5h6a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 17.6 21H7"/></svg>',
+    down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V3h3v11h-3zm0 0-4 7a2 2 0 0 1-3-2l1-5H5a2 2 0 0 1-2-2.3l1.4-7A2 2 0 0 1 6.4 3H17"/></svg>'
+  };
   const OPENERS = ['', 'Good question. ', 'Sure. ', 'Happy to help. ', ''];
-  const STARTERS = ['How much does it cost?', 'Is our data secure?', 'How long does migration take?', 'Can students contact support?', 'Is there a mobile app?', 'What if you go out of business?'];
+  let lastCard = null, asked = 0, job = 0, finishNow = null;
+  const clean = s => s.replace(/&amp;/g, '&');
+  const wait = ms => new Promise(r => setTimeout(r, reduce ? 0 : ms));
+  function pick() { return OPENERS[Math.floor(Math.random() * OPENERS.length)]; }
+  function lead(opener, say) { return /^(Yes|No|Not|Good|Here|Sure|Happy|In short|Quite|Easy|Exactly|Very|Either|Less|Because|For|You)\b/.test(say) && !/closest/.test(opener) ? '' : opener; }
 
-  function scrollDown() { log.scrollTop = log.scrollHeight; }
-  function addUser(text) {
-    const m = document.createElement('div'); m.className = 'msg me';
-    const b = document.createElement('div'); b.className = 'bubble'; b.textContent = text;
-    m.appendChild(b); log.appendChild(m); scrollDown();
-  }
-  function addBot() {
-    const m = document.createElement('div'); m.className = 'msg bot';
-    m.innerHTML = BOT_ICON + '<div class="bubble"><span class="typing" aria-label="Typing"><i></i><i></i><i></i></span></div>';
-    log.appendChild(m); scrollDown();
-    return m.querySelector('.bubble');
-  }
-  function stream(el, text, done) {
-    if (reduce) { el.textContent = text; done(); return; }
-    const words = text.split(' '); let i = 0;
-    const tick = () => {
-      i = Math.min(words.length, i + 2);
-      el.textContent = words.slice(0, i).join(' ');
-      scrollDown();
-      if (i < words.length) setTimeout(tick, 28); else done();
-    };
-    tick();
-  }
-  function chipRow(list, hint) {
-    const wrap = document.createElement('div'); wrap.className = 'follow';
-    if (hint) { const h = document.createElement('div'); h.className = 'hint'; h.textContent = hint; wrap.appendChild(h); }
-    const row = document.createElement('div'); row.className = 'chips';
-    list.forEach(item => {
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip' + (item.gold ? ' gold' : '');
-      b.textContent = item.label; b.addEventListener('click', () => ask(item.q || item.label));
-      row.appendChild(b);
-    });
-    wrap.appendChild(row); log.appendChild(wrap); scrollDown();
-  }
-  function reply(text, after) {
-    const bubble = addBot();
-    setTimeout(() => {
-      bubble.innerHTML = '<p></p>';
-      stream(bubble.querySelector('p'), text, () => { if (after) after(bubble); scrollDown(); });
-    }, reduce ? 0 : 420 + Math.min(500, text.length * 2));
-  }
-  function answerCard(c, opener, alsoList) {
-    lastCard = c;
-    reply(lead(opener, c.say) + c.say, bubble => {
-      const det = document.createElement('details'); det.className = 'more';
-      det.innerHTML = '<summary>Show the full detail</summary><div class="inner"></div>';
-      det.querySelector('.inner').innerHTML = c.html;
-      det.addEventListener('toggle', () => { if (det.open) setTimeout(scrollDown, 30); });
-      bubble.appendChild(det);
-      const src = document.createElement('div'); src.className = 'src';
-      src.innerHTML = '<span class="lbl">Source:</span>';
-      const l = document.createElement('button'); l.type = 'button'; l.className = 'link';
-      l.textContent = (c.n ? c.n + ' · ' : '') + c.title;
-      l.addEventListener('click', () => openReader(c.id));
-      src.appendChild(l); bubble.appendChild(src);
-      const rate = document.createElement('div'); rate.className = 'rate';
-      rate.innerHTML = '<span>Helpful?</span><button type="button">Yes</button><button type="button">Not quite</button>';
-      const [yes, no] = rate.querySelectorAll('button');
-      yes.addEventListener('click', () => { rate.innerHTML = '<span>Great, glad that helped.</span>'; });
-      no.addEventListener('click', () => { rate.innerHTML = '<span>Thanks for saying so. Try asking another way, or email education@youmultiply.com.</span>'; });
-      bubble.appendChild(rate);
-      const follow = (alsoList && alsoList.length ? alsoList : related(c)).slice(0, 3);
-      if (follow.length) chipRow(follow.map(x => ({ label: x.short, q: '#' + x.id })), 'You might also ask');
-    });
-  }
-  function related(c) {
-    const same = c.sec.cards.filter(x => x !== c);
-    const after = same.filter(x => x.posInSec > c.posInSec);
-    return after.concat(same.filter(x => x.posInSec < c.posInSec));
-  }
-
-  function ask(raw) {
-    const text = raw.trim(); if (!text) return;
-    // Chips pass a card id directly
-    if (text.startsWith('#') && byId.has(text.slice(1))) {
-      const c = byId.get(text.slice(1));
-      addUser(c.title); answerCard(c, pick()); return;
-    }
-    addUser(text);
+  // Work out what to say: a passage from the pack, or a plain message when the pack has nothing
+  function plan(text) {
+    if (text.startsWith('#') && byId.has(text.slice(1))) return { card: byId.get(text.slice(1)), opener: '' };
     const t = text.toLowerCase().replace(/[!?.]+$/, '').trim();
     const words = t.split(/\s+/);
-
-    if (/^(hi|hello|hey|hiya|howdy|good (morning|afternoon|evening))\b/.test(t) && words.length <= 4) {
-      reply('Hello! I can answer questions about ReachLMS using the due diligence pack. What would you like to know?', () => chipRow(STARTERS.slice(0, 4).map(s => ({ label: s }))));
-      return;
-    }
-    if (/\b(thanks|thank you|cheers|great|perfect|awesome)\b/.test(t) && words.length <= 5) {
-      reply('You’re welcome. Ask me anything else about ReachLMS whenever you like.', () => chipRow([{ label: 'Surprise me', q: '__surprise' }].concat(STARTERS.slice(3, 5).map(s => ({ label: s })))));
-      return;
-    }
-    if (/who are you|what are you|are you (a )?(bot|human|real|ai)|how do you work/.test(t)) {
-      reply('I’m the ReachLMS guide. I match your question to the relevant part of the ReachLMS due diligence pack and explain it in plain words. If the pack doesn’t cover something, I’ll tell you instead of guessing.');
-      return;
-    }
+    if (/^(hi|hello|hey|hiya|howdy|good (morning|afternoon|evening))\b/.test(t) && words.length <= 4)
+      return { text: 'Hello! I can answer questions about ReachLMS using the due diligence pack. What would you like to know?' };
+    if (/\b(thanks|thank you|cheers|great|perfect|awesome)\b/.test(t) && words.length <= 5)
+      return { text: 'You’re welcome. Ask me anything else about ReachLMS whenever you like.' };
+    if (/who are you|what are you|are you (a )?(bot|human|real|ai)|how do you work/.test(t))
+      return { text: 'I’m the ReachLMS guide. I find the part of the ReachLMS due diligence pack that answers your question and explain it in plain words. If the pack doesn’t cover something, I’ll tell you instead of guessing.' };
     if (/^(tell me )?more\b|^go on\b|^continue\b|^next\b|^and\??$|^what else/.test(t) && lastCard) {
       const nxt = related(lastCard)[0];
-      if (nxt) { reply('Here’s more on ' + lastCard.sec.label.replace(/&amp;/g, '&') + '.', () => answerCard(nxt, '')); return; }
+      if (nxt) return { card: nxt, opener: 'Here’s more on ' + clean(lastCard.sec.label) + '. ' };
     }
-    // Short follow-ups lean on the last answer ("how much is it?", "and for students?")
     let query = text;
     const qts = queryTerms(text);
     const alone = search(text).results[0];
     const clear = alone && alone.cover === 1 && alone.score >= 2.5;
-    if (lastCard && !clear && words.length <= 5 && (/\b(it|that|this|those|they|them|its|there)\b/.test(t) || qts.length <= 1)) {
-      query = text + ' ' + lastCard.short;
-    }
-    // A headcount in the question points to tier sizing
+    if (lastCard && !clear && words.length <= 5 && (/\b(it|that|this|those|they|them|its|there)\b/.test(t) || qts.length <= 1)) query = text + ' ' + lastCard.short;
     const big = (t.replace(/,/g, '').match(/\b\d{3,6}\b/g) || []).some(n => +n >= 200);
     if (big && /student|user|learner|people|staff|cost|price|pay|tier|size/.test(t)) query += ' tiers capacity how many students tier size';
     const { results } = search(query);
     const top = results[0];
-    // Words the pack never uses at all
     const unknown = (text.toLowerCase().match(/[a-z0-9-]+/g) || []).filter(w => {
       if (w.length < 4 || STOP.has(w) || /\d/.test(w)) return false;
       const s = stem(w); const k = CANON.get(s) || s;
       if (k.startsWith('#') || df.has(k)) return false;
       return !vocab.some(v => !v.startsWith('#') && v.startsWith(k));
     });
-    if (unknown.length && top && top.cover < 1) {
-      reply('The due diligence pack doesn’t mention “' + unknown.join('”, “') + '”, so I can’t answer that part. The closest topic it covers is “' + top.c.title + '”.', () => {
-        chipRow(results.slice(0, 3).map(r => ({ label: r.c.short, q: '#' + r.c.id })), 'Open the closest topics');
-      });
-      return;
-    }
-    if (!top || top.score < 1.1) {
-      reply('I couldn’t find that in the due diligence pack, so I won’t guess. Try asking another way, browse the topics below, or email the team at education@youmultiply.com.', () => {
-        if (top) chipRow(results.slice(0, 3).map(r => ({ label: r.c.short, q: '#' + r.c.id })), 'Closest topics in the pack');
-        else chipRow(STARTERS.slice(0, 3).map(s => ({ label: s })), 'Popular questions');
-      });
-      return;
-    }
-    const others = results.slice(1).filter(r => r.score > top.score * 0.55).map(r => r.c);
-    const opener = top.cover < 0.6 ? 'Here’s the closest answer I found in the pack. ' : pick();
-    answerCard(top.c, opener, others);
+    if (unknown.length && top && top.cover < 1)
+      return { text: 'The due diligence pack doesn’t mention “' + unknown.join('”, “') + '”, so I can’t answer that part without guessing. The closest topic it does cover is below.', card: top.c, citeOnly: true };
+    if (!top || top.score < 1.1)
+      return { text: 'I couldn’t find that in the due diligence pack, so I won’t guess. Try asking another way, browse the topics below, or email the team at education@youmultiply.com.' };
+    return { card: top.c, opener: top.cover < 0.6 ? 'Here’s the closest answer I found in the pack. ' : pick() };
   }
-  function pick() { return OPENERS[Math.floor(Math.random() * OPENERS.length)]; }
-  function lead(opener, say) { return /^(Yes|No|Not|Good|Here|Sure|Happy|In short|Quite|Easy|Exactly|Very|Either|Less|Because|For|You)\b/.test(say) && !/closest/.test(opener) ? '' : opener; }
+  function related(c) {
+    const same = c.sec.cards.filter(x => x !== c);
+    return same.filter(x => x.posInSec > c.posInSec).concat(same.filter(x => x.posInSec < c.posInSec));
+  }
 
-  document.getElementById('composer').addEventListener('submit', e => {
-    e.preventDefault();
-    const v = input.value; input.value = '';
-    if (v.trim() === '__surprise') surprise(); else ask(v);
-  });
-  function surprise() {
-    const pool = cards.filter(c => c !== lastCard && !/^q[AB]/.test(c.id));
-    const c = pool[Math.floor(Math.random() * pool.length)];
-    addUser('Surprise me!');
-    answerCard(c, 'Here’s something from ' + c.sec.label.replace(/&amp;/g, '&') + '. ');
+  function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+  function setBusy(on) {
+    sendBtn.classList.toggle('busy', on);
+    sendBtn.setAttribute('aria-label', on ? 'Stop answering' : 'Send question');
+    sendBtn.disabled = on ? false : !input.value.trim();
+    topAvatar.classList.toggle('live', on);
   }
-  document.getElementById('surprise').addEventListener('click', surprise);
-  // Chip "Surprise me" uses a sentinel
-  const _ask = ask;
-  ask = function (q) { if (q === '__surprise') surprise(); else _ask(q); };
+  function citeButton(c, label) {
+    const b = el('button', 'cite'); b.type = 'button';
+    const tag = el('span', 'tag'); tag.textContent = c.n ? '§ ' + c.n : (/^[AB]$/.test(c.sec.n) ? 'Appendix' : 'Guide');
+    const ct = el('span', 'ct');
+    const ti = el('b'); ti.textContent = c.title;
+    const se = el('span'); se.textContent = (label || 'Source') + ' · ' + clean(secName(c.sec));
+    ct.append(ti, se);
+    const op = el('span', 'open', 'Open →');
+    b.append(tag, ct, op);
+    b.addEventListener('click', () => openReader(c.id));
+    return b;
+  }
+
+  async function ask(raw) {
+    const text = raw.trim(); if (!text) return;
+    const my = ++job;
+    if (finishNow) finishNow();
+    asked++;
+    document.getElementById('qcount').textContent = asked === 1 ? '1 question asked' : asked + ' questions asked';
+
+    // Clear the previous exchange
+    const old = [...log.children];
+    if (old.length && !reduce) { old.forEach(n => n.classList.add('leaving')); await wait(170); }
+    if (my !== job) return;
+    log.innerHTML = '';
+
+    const me = el('div', 'turn me'); const q = el('div', 'q');
+    q.textContent = text.startsWith('#') && byId.has(text.slice(1)) ? byId.get(text.slice(1)).title : text;
+    me.appendChild(q); log.appendChild(me);
+
+    const bot = el('div', 'turn bot', BOT_ICON);
+    const name = el('div', 'bot-name', 'ReachLMS guide');
+    const status = el('div', 'status', '<span class="shimmer">Searching the due diligence pack…</span>');
+    bot.append(name, status); log.appendChild(bot);
+    setBusy(true);
+
+    const p = plan(text);
+    await wait(520);
+    if (my !== job) return;
+    if (p.card && !p.citeOnly) {
+      status.innerHTML = '<span class="shimmer">Reading ' + (p.card.n ? '§ ' + p.card.n + ' in ' : '') + p.card.sec.label + '…</span>';
+      await wait(560);
+      if (my !== job) return;
+    }
+    status.remove();
+
+    const message = p.card && !p.citeOnly ? lead(p.opener, p.card.say) + p.card.say : p.text;
+    const ans = el('div', 'answer'); const para = el('p'); const caret = el('span', 'caret');
+    ans.append(para, caret); bot.appendChild(ans);
+
+    await new Promise(resolve => {
+      let i = 0, timer = null, done = false;
+      const finish = () => { if (done) return; done = true; clearTimeout(timer); para.textContent = message; caret.remove(); finishNow = null; resolve(); };
+      finishNow = finish;
+      if (reduce) { finish(); return; }
+      const step = () => {
+        if (my !== job) { finish(); return; }
+        i = Math.min(message.length, i + 3 + Math.floor(Math.random() * 3));
+        para.textContent = message.slice(0, i);
+        if (i >= message.length) finish(); else timer = setTimeout(step, 16);
+      };
+      step();
+    });
+    if (my !== job) return;
+
+    if (p.card) {
+      lastCard = p.card;
+      bot.appendChild(citeButton(p.card, p.citeOnly ? 'Closest topic' : 'Source'));
+      if (!p.citeOnly) {
+        const det = el('details', 'more', '<summary>Show the full passage from the pack</summary><div class="inner"></div>');
+        det.querySelector('.inner').innerHTML = p.card.html;
+        bot.appendChild(det);
+      }
+    }
+    const acts = el('div', 'actions');
+    const copy = el('button', 'act', ICONS.copy); copy.type = 'button'; copy.setAttribute('aria-label', 'Copy answer');
+    const up = el('button', 'act', ICONS.up); up.type = 'button'; up.setAttribute('aria-label', 'Good answer'); up.setAttribute('aria-pressed', 'false');
+    const down = el('button', 'act', ICONS.down); down.type = 'button'; down.setAttribute('aria-label', 'Not helpful'); down.setAttribute('aria-pressed', 'false');
+    const note = el('span', 'act-note');
+    copy.addEventListener('click', () => {
+      const txt = message + (p.card && !p.citeOnly ? '\n\nSource: ' + (p.card.n ? p.card.n + ' ' : '') + p.card.title : '');
+      const ok = () => { note.textContent = 'Copied'; };
+      try { navigator.clipboard.writeText(txt).then(ok, () => { note.textContent = 'Copy not available here'; }); } catch (_) { note.textContent = 'Copy not available here'; }
+    });
+    up.addEventListener('click', () => { up.setAttribute('aria-pressed', 'true'); down.setAttribute('aria-pressed', 'false'); note.textContent = 'Thanks for the feedback.'; });
+    down.addEventListener('click', () => { down.setAttribute('aria-pressed', 'true'); up.setAttribute('aria-pressed', 'false'); note.textContent = 'Thanks. Try asking another way, or email education@youmultiply.com.'; });
+    acts.append(copy, up, down, note);
+    bot.appendChild(acts);
+    setBusy(false);
+  }
+
+  // Composer: auto-growing box, Enter to send, Shift+Enter for a new line, stop while answering
+  function grow() { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 140) + 'px'; }
+  input.addEventListener('input', () => { grow(); if (!sendBtn.classList.contains('busy')) sendBtn.disabled = !input.value.trim(); });
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); submit(); }
+  });
+  document.getElementById('composer').addEventListener('submit', e => { e.preventDefault(); submit(); });
+  function submit() {
+    if (sendBtn.classList.contains('busy') && !input.value.trim()) { if (finishNow) finishNow(); return; }
+    const v = input.value; if (!v.trim()) return;
+    input.value = ''; grow();
+    ask(v);
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '') && !dlg.open) { e.preventDefault(); input.focus(); }
+  });
 
   // Opening state
-  const hello = document.createElement('div'); hello.className = 'msg bot';
-  hello.innerHTML = BOT_ICON + '<div class="bubble"><p>Hi! I’m the ReachLMS guide. Ask me about pricing, security, migration, support or anything else in the due diligence pack, and I’ll explain it in plain words.</p></div>';
-  log.appendChild(hello);
-  chipRow(STARTERS.map((s, i) => ({ label: s, gold: i === 0 })));
+  const hello = el('div', 'turn bot', BOT_ICON);
+  hello.append(el('div', 'bot-name', 'ReachLMS guide'));
+  const hi = el('div', 'answer'); hi.innerHTML = '<p>Hi! I’m the ReachLMS guide. Ask me about pricing, security, migration, support or anything else in the due diligence pack, and I’ll explain it in plain words with a link to the exact section I used.</p>';
+  hello.append(hi); log.appendChild(hello);
 
   /* ---------- Topic tiles ---------- */
   const grid = document.getElementById('grid');
@@ -1552,11 +1585,6 @@ dialog.reader::backdrop { background: rgba(10, 16, 38, .6); }
   dlg.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight') $('r-next').click();
     else if (e.key === 'ArrowLeft') $('r-prev').click();
-  });
-  $('r-ask').addEventListener('click', () => {
-    const c = cards[rIdx]; dlg.close();
-    document.querySelector('.chat').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
-    ask('#' + c.id);
   });
   $('r-content').addEventListener('click', e => {
     const a = e.target.closest('a[href^="#"]'); if (!a) return;
