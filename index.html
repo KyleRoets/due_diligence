@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ReachLMS Due Diligence Guide</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" type="image/svg+xml" href="reachlms-icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap">
@@ -64,7 +65,7 @@ h1, h2, h3 { margin: 0; text-wrap: balance; }
 .chat-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
 .who { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; }
 .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--navy); border: 1px solid rgba(232, 199, 126, .45); display: grid; place-items: center; flex: 0 0 auto; position: relative; }
-.avatar svg { width: 18px; height: 18px; }
+.avatar img { width: 100%; height: 100%; border-radius: 50%; display: block; }
 .avatar.live::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--gold); opacity: 0; animation: ring 1.4s ease-out infinite; }
 @keyframes ring { 0% { transform: scale(.85); opacity: .9; } 100% { transform: scale(1.25); opacity: 0; } }
 .who small { display: block; font-weight: 400; font-size: 12px; color: var(--muted); }
@@ -87,6 +88,22 @@ h1, h2, h3 { margin: 0; text-wrap: balance; }
 .status .tick { color: #2fb36d; font-weight: 700; }
 .answer { font-size: 16.5px; line-height: 1.7; min-width: 0; }
 .answer p { margin: 0; }
+.answer > * + * { margin-top: 12px; }
+.answer h4 { font: 700 17px/1.3 var(--display); margin-top: 18px; color: var(--fg); }
+.answer h4 + * { margin-top: 6px; }
+.answer ul { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+.answer li { padding-left: 2px; }
+.answer li::marker { color: var(--gold-deep); }
+.answer li b { font-weight: 600; }
+.sources { display: grid; gap: 8px; animation: rise .3s ease-out; }
+.sources-head { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.sources-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 640px) { .sources-list { grid-template-columns: minmax(0, 1fr); } }
+.cite.sm { width: 100%; padding: 6px 10px 6px 6px; border-radius: 10px; gap: 8px; }
+.cite.sm .tag { font-size: 11px; padding: 2px 6px; }
+.cite.sm .ct b { font-size: 13px; }
+.cite.sm .ct span { font-size: 11px; }
+.cite.sm .open { display: none; }
 .caret { display: inline-block; width: 8px; height: 1.05em; background: var(--gold-deep); vertical-align: -2px; margin-left: 2px; border-radius: 2px; animation: caret .9s steps(1) infinite; }
 @keyframes caret { 50% { opacity: 0; } }
 .cite { display: inline-flex; align-items: center; gap: 10px; justify-self: start; max-width: 100%; text-align: left; background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px 8px 8px; cursor: pointer; color: var(--fg); transition: border-color .15s ease, transform .15s ease; animation: rise .3s ease-out; }
@@ -231,7 +248,7 @@ dialog.reader::backdrop { background: rgba(10, 16, 38, .6); }
     <div class="chat" role="region" aria-label="Ask the ReachLMS guide">
       <div class="chat-top">
         <div class="who">
-          <span class="avatar" id="top-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#E8C77E" stroke-width="2.2" stroke-linecap="round"><path d="M4 6l16 12M20 6L4 18"/></svg></span>
+          <span class="avatar" id="top-avatar" aria-hidden="true"><img src="reachlms-icon.svg" alt=""></span>
           <span>ReachLMS guide<small><span class="dot"></span>Answers only from the due diligence pack</small></span>
         </div>
         <span class="qcount" id="qcount"></span>
@@ -1253,27 +1270,28 @@ dialog.reader::backdrop { background: rgba(10, 16, 38, .6); }
   sections.forEach(s => byId.set(s.id, s.cards[0]));
 
   /* ---------- Matching engine: maps a question to passages in the pack ---------- */
-  const STOP = new Set('a an the and or but if of to in on at by for with from as is are was were be been being do does did doing have has had having i we our ours us you your yours it its this that these those there their them they what which whom whose why how can could would should will shall may might must about into over under any some all each more most other such no nor not only own same so than too very just get got me my also please tell know want need like using use used still yes ok okay hi hello hey thanks thank offer offers offered provide provides provided include includes until before after when then really actually let lets gonna wanna going'.split(' '));
+  const STOP = new Set('a an the and or but if of to in on at by for with from as is are was were be been being do does did doing have has had having i we our ours us you your yours it its this that these those there their them they what which whom whose why how can could would should will shall may might must about into over under any some all each more most other such no nor not only own same so than too very just get got me my also please tell know want need like using use used still yes ok okay hi hello hey thanks thank offer offers offered provide provides provided include includes until before after when then really actually let lets gonna wanna going give show tell explain describe breakdown overview summary summarise summarize list detail details info feature features walk through basics everything included option options'.split(' '));
   const GROUPS = [
-    ['price','cost','costs','costing','pricing','priced','prices','fee','fees','pay','paying','paid','payment','charge','charges','charged','expensive','cheap','cheaper','cheapest','afford','affordable','budget','much','dollar','dollars','money','spend','spending','tco','subscription','invoice'],
+    ['price','cost','costs','costing','pricing','priced','prices','fee','fees','pay','paying','paid','payment','charge','charges','charged','expensive','cheap','cheaper','cheapest','afford','affordable','budget','much','dollar','dollars','money','spend','spending','tco','invoice'],
     ['secure','security','secured','safe','safety','breach','breaches','hack','hacked','hacker','attack','attacks','vulnerability','vulnerabilities','protect','protected','protection','encrypt','encrypted','encryption','threat','threats','risky'],
     ['migrate','migration','migrations','migrating','migrated','move','moving','moved','switch','switching','transfer','transferring','import','importing','cutover','transition','convert'],
     ['exit','leave','leaving','cancel','cancellation','cancelling','terminate','termination','lockin','lock','locked','quit'],
     ['privacy','private','gdpr','ferpa','popia','personal','compliance','compliant','regulation','regulations','law','laws'],
     ['mobile','app','apps','phone','phones','ios','android','iphone','offline','tablet','smartphone'],
     ['ai','artificial','intelligence','chatgpt','llm','gpt','openai','anthropic','claude','gemini','copilot','mcp'],
-    ['support','help','helpdesk','assistance','assist','service'],
+    ['support','help','helpdesk','assistance','assist'],
     ['training','train','trained','retrain','retraining','onboarding','learning','curve','teach'],
     ['uptime','reliable','reliability','downtime','outage','outages','availability','available','down','sla'],
     ['backup','backups','restore','recovery','recover','disaster','snapshot'],
     ['quiz','quizzes','exam','exams','assessment','assessments','assess'],
     ['host','hosting','hosted','server','servers','region','regions','datacenter','datacentre','location','where','residency','country','countries','cloud','stored','store'],
     ['contract','contracts','agreement','agreements','legal','msa','terms','sign','signing'],
-    ['long','timeline','weeks','week','quick','quickly','fast','duration','soon','months','time','takes','take'],
+    ['long','timeline','weeks','week','quick','quickly','fast','duration','soon','time','takes','take'],
     ['sso','login','logins','signin','authentication','identity','saml','okta','entra','password','passwords'],
-    ['integrate','integration','integrations','lti','tool','tools','plugin','plugins','connect','connects','connection'],
+    ['integrate','integration','integrations','tool','tools','plugin','plugins','connect','connects','connection'],
     ['video','videos','studio','youtube','vimeo','media'],
-    ['brand','branding','branded','logo','theme','whitelabel','white','label','labeled','colour','colours','color','colors','domain'],
+    ['brand','branding','branded','logo','theme','colour','colours','color','colors','domain'],
+    ['whitelabel','white','label','labeled','labelled','white-label','white-labeled'],
     ['grade','grades','grading','mark','marking','feedback','annotate','annotation','annotations','speedgrader'],
     ['storage','space','gb','tb','file','files','bandwidth'],
     ['company','youmultiply','vendor','stable','stability','business','bankrupt','bankruptcy','owner','founded'],
@@ -1302,8 +1320,9 @@ dialog.reader::backdrop { background: rgba(10, 16, 38, .6); }
   }
   const CANON = new Map();
   GROUPS.forEach(g => { const c = '#' + stem(g[0]); g.forEach(w => CANON.set(stem(w), c)); });
+  function norm(str) { return str.toLowerCase().replace(/[’‘]/g, "'").replace(/n't\b/g, ' not').replace(/'(s|re|ve|ll|d|m)\b/g, ''); }
   function terms(str) {
-    return (str.toLowerCase().replace(/[“”"()\[\],.?!:;/]/g, ' ').match(/[a-z0-9$&+-]+/g) || [])
+    return (norm(str).replace(/[“”"()\[\],.?!:;/]/g, ' ').match(/[a-z0-9$&+-]+/g) || [])
       .map(w => w.replace(/^-+|-+$/g, ''))
       .filter(w => w && !STOP.has(w))
       .map(w => { const s = stem(w); return CANON.get(s) || s; });
@@ -1360,7 +1379,7 @@ dialog.reader::backdrop { background: rgba(10, 16, 38, .6); }
   const sendBtn = document.getElementById('send');
   const topAvatar = document.getElementById('top-avatar');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const BOT_ICON = '<span class="avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#E8C77E" stroke-width="2.4" stroke-linecap="round"><path d="M4 6l16 12M20 6L4 18"/></svg></span>';
+  const BOT_ICON = '<span class="avatar" aria-hidden="true"><img src="reachlms-icon.svg" alt=""></span>';
   const ICONS = {
     copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>',
     up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v11H4V10h3zm0 0 4-7a2 2 0 0 1 3 2l-1 5h6a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 17.6 21H7"/></svg>',
@@ -1370,50 +1389,237 @@ dialog.reader::backdrop { background: rgba(10, 16, 38, .6); }
   let lastCard = null, asked = 0, job = 0, finishNow = null;
   const clean = s => s.replace(/&amp;/g, '&');
   const wait = ms => new Promise(r => setTimeout(r, reduce ? 0 : ms));
+  const C = id => byId.get(id);
   function pick() { return OPENERS[Math.floor(Math.random() * OPENERS.length)]; }
   function lead(opener, say) { return /^(Yes|No|Not|Good|Here|Sure|Happy|In short|Quite|Easy|Exactly|Very|Either|Less|Because|For|You)\b/.test(say) && !/closest/.test(opener) ? '' : opener; }
 
-  // Work out what to say: a passage from the pack, or a plain message when the pack has nothing
-  function plan(text) {
-    if (text.startsWith('#') && byId.has(text.slice(1))) return { card: byId.get(text.slice(1)), opener: '' };
-    const t = text.toLowerCase().replace(/[!?.]+$/, '').trim();
+  /* Answer shapes. Every sentence below is taken from the pack; card "say" texts are plain-language versions of each passage. */
+  const P = text => ({ t: 'p', text });
+  const H = text => ({ t: 'h', text });
+  const L = items => ({ t: 'ul', items });
+  const fromCards = pairs => L(pairs.map(([label, id]) => ({ label, text: C(id).say })));
+  function single(card, opener) {
+    return { blocks: [P(lead(opener || '', card.say) + card.say)], sources: [card], detail: card, focus: card };
+  }
+
+  const COMPOSITES = {
+    features: () => ({
+      blocks: [
+        P('Here’s everything the due diligence pack lists as part of ReachLMS, grouped so it’s easy to scan. The short version: you get the full open-source Canvas platform, plus components YouMultiply adds on top, plus hosting, support and onboarding, with a few optional paid extras.'),
+        H('The full Canvas core (included)'),
+        P('Courses, modules, pages, assignments, discussions, Classic Quizzes and question banks, the gradebook and SpeedGrader, rubrics, learning outcomes and Mastery Paths, Blueprint courses, groups, calendar, inbox, conferences, collaborations, ePortfolios, notifications, LTI 1.1 and 1.3 tools, the full REST and GraphQL APIs, SIS imports, the Theme Editor, sub-accounts and roles. It’s the same Canvas interface, so faculty don’t need to retrain.'),
+        H('What ReachLMS adds (included)'),
+        L([
+          { label: 'In-line annotation', text: 'Highlight, comment and draw on PDF submissions in SpeedGrader, with each annotation linked to a sidebar comment so students are notified.' },
+          { label: 'Interactive HTML5 content hub', text: 'Interactive content and assessments embedded in pages, assignments and quizzes, covering the New Quizzes question types Classic lacks.' },
+          { label: 'Interactive video', text: 'Video with embedded questions and prompts on pages and assignments, at no extra cost.' },
+          { label: 'Analytics', text: 'Course and student-level analytics, standard Canvas admin reports, and an analytics dashboard that identifies at-risk students.' },
+          { label: 'Standard mobile app', text: 'The ReachLMS app on Apple and Google stores, with push notifications and offline study.' },
+          { label: 'Christian education resources', text: 'The Logos Library Access Manager (2,700+ Logos resources) and six months of EVERYWORD Premium for every user, on request at no extra cost.' },
+          { label: 'Support for everyone', text: 'WhatsApp and email support open to all users, students and faculty included, with no per-user fees.' }
+        ]),
+        H('Included in every subscription'),
+        P('A dedicated instance in the region you choose, storage, daily backups, all upgrades and security patches, Basic support hours, SSO, LTI and API access, and the 99.9% uptime commitment. Base Plus and above add 500 GB storage, 14-day backups, two on-demand test environments a year and an annual capacity and health review.'),
+        H('Included in implementation'),
+        P('Migration of your courses, branding of the web platform (logo, colors, login page and your own domain), custom course templates, SSO and SIS setup help, and recorded training sessions. How much of each depends on the Core, Full or Managed package.'),
+        H('Optional paid add-ons'),
+        L([
+          { label: 'White-labeled mobile app', text: '$3,500 setup, $2,400 a year.' },
+          { label: 'E-commerce (listings, payments, certificates)', text: '$2,500 setup, $6,250 a year; Stripe $650, other gateways about $1,300.' },
+          { label: 'Full video platform', text: 'From $4,400 setup and from $2,400 a year.' },
+          { label: 'Reach AI (beta)', text: '$5,800 setup, then free with your own API key.' },
+          { label: 'MCP server', text: '$1,200, to connect your own AI tools.' },
+          { label: 'Permanent test instance', text: '$1,200 a year.' },
+          { label: '30-day backup retention', text: '$75 a month.' },
+          { label: '24/7 support', text: '$1,200 a month, including 10 support hours.' },
+          { label: 'ReachSIS and self-hosting', text: 'ReachSIS is priced separately; self-hosting is $12,500 setup and $4,950 a year.' }
+        ]),
+        H('Not offered'),
+        P('Mastery Connect, Impact and Portfolium have no direct equivalent. Badges are available through third-party Open Badges tools via LTI, and Canvas’s built-in ePortfolios remain.')
+      ],
+      sources: ['q2-1', 'q1-1', 'q2-3', 'q2-4', 'q2-7', 'q2-8', 'q3-1', 'q2-10', 'q11-2', 'q12-2', 'q15-2', 'q12-3', 'q2-2'].map(C)
+    }),
+    howItWorks: () => ({
+      blocks: [
+        P('Here’s how ReachLMS works from start to finish, based on the pack.'),
+        fromCards([['What it is', 'q1-1'], ['Your own instance', 'q4-1'], ['Moving over', 'q7-1-1'], ['Timeline', 'q7-2-2'], ['Day to day for users', 'q9-1'], ['Getting help', 'q11-2'], ['What you pay', 'q12-1'], ['If you ever leave', 'q14-1']])
+      ],
+      sources: ['q1-1', 'q4-1', 'q7-1-1', 'q7-2-2', 'q9-1', 'q11-2', 'q12-1', 'q14-1'].map(C)
+    }),
+    costs: () => ({
+      blocks: [
+        P('Here’s the full picture of what ReachLMS costs, pulled together from the pricing sections of the pack. All prices are in US dollars.'),
+        fromCards([['Annual subscription', 'q12-1'], ['Small schools and self-hosting', 'q12-1b'], ['One-time implementation', 'q12-4'], ['Optional add-ons', 'q12-3'], ['Support beyond your hours', 'q11-3'], ['When costs can change', 'q12-7'], ['Leaving and trials', 'q12-8']]),
+        P('For the exact figures in table form, open the price list sections below.')
+      ],
+      sources: ['q12-1', 'q12-1b', 'q12-4', 'q12-3', 'q11-3', 'q12-7', 'q12-8', 'qA-1', 'qA-2', 'qA-3'].map(C)
+    }),
+    compare: () => ({
+      blocks: [
+        P('Here’s how ReachLMS compares with enterprise-hosted Canvas, drawing on several parts of the pack.'),
+        fromCards([['What you gain', 'q2-9'], ['What has no direct equivalent', 'q2-2'], ['Quizzes', 'q2-4'], ['Cost', 'q12-6'], ['Why the price is lower', 'q12-10'], ['For faculty and students', 'q9-1']]),
+        P('The full side-by-side comparison tables are in the sections below.')
+      ],
+      sources: ['q2-9', 'q2-2', 'q2-4', 'q12-6', 'q12-10', 'q9-1', 'q11-10', 'q2-12a', 'q2-12b', 'q2-12c'].map(C)
+    }),
+    limits: () => ({
+      blocks: [
+        P('Here’s what the pack itself says ReachLMS doesn’t do, or doesn’t have yet.'),
+        L([
+          { label: 'Instructure-only products', text: 'Mastery Connect, Impact and Portfolium have no direct equivalent; badges need a third-party LTI tool.' },
+          { label: 'Three New Quizzes question types', text: 'Categorization, ordering and hot spot aren’t in Classic Quizzes. They’re rebuilt as interactive HTML5 items, and deeper automatic grade pass-back is still on the roadmap.' },
+          { label: 'Annotation', text: 'In-line annotation works on PDF submissions only.' },
+          { label: 'Hosting regions', text: 'There’s no region in Africa or the Middle East; Frankfurt or London is recommended there.' },
+          { label: 'Certifications', text: 'The HECVAT isn’t complete yet, the independent penetration test is scheduled for 2027, and ISO 27001 certification is targeted for the end of 2027.' },
+          { label: 'Insurance', text: 'YouMultiply doesn’t currently carry cyber liability insurance.' },
+          { label: 'Migration', text: 'Historical analytics and student ePortfolios don’t migrate; the Core package doesn’t bring across grade and submission history.' },
+          { label: 'Languages', text: 'The added ReachLMS components are in English, with other languages on request.' },
+          { label: 'Instructure apps', text: 'The Canvas Student and Teacher apps aren’t supported; students use the ReachLMS app, the white-labeled app or the mobile web.' }
+        ])
+      ],
+      sources: ['q2-2', 'q2-4', 'q2-3', 'q4-2', 'q4-6', 'q4-5', 'q7-1-2', 'q15-2', 'q9-9', 'q3-1'].map(C)
+    }),
+    risks: () => ({
+      blocks: [
+        P('Here’s what the pack says about the risks of choosing ReachLMS, and how each is handled.'),
+        fromCards([['Main risks and mitigations', 'q14-4'], ['If the company closed', 'q14-2'], ['Dependence on Instructure', 'q14-3'], ['Leaving', 'q14-1'], ['Security incidents', 'q4-5'], ['Rollback during migration', 'q7-2-5']])
+      ],
+      sources: ['q14-4', 'q14-2', 'q14-3', 'q14-1', 'q4-5', 'q7-2-5'].map(C)
+    })
+  };
+
+  // Words that don't narrow a "what's included" style question
+  const GENERIC = new Set(['reachlm', 'reachlms', 'includ', 'feature', 'featur', 'platform', 'list', 'everyth', 'everything', 'come', 'capabiliti', 'capability', 'functionality', 'functional', 'lms', 'product', 'package', 'standard', 'box', 'whats', 'what’s', 'full', 'complet', 'complete', 'overview', 'summary', 'detail', 'available', '#canva', 'give', 'show', 'explain', 'work']);
+  const specific = text => terms(text).filter(x => !GENERIC.has(x) && !GENERIC.has(x.replace(/^#/, '')));
+
+  function sectionOverview(sec) {
+    const list = sec.cards.filter(c => c.say);
+    return {
+      blocks: [P('Here’s an overview of ' + clean(sec.label) + ', covering every answer the pack gives on it.'), L(list.map(c => ({ label: c.short.replace(/[“”]/g, ''), text: c.say })))],
+      sources: list
+    };
+  }
+  function bestSection(results, topic) {
+    const tally = new Map();
+    const want = new Set(terms(topic || ''));
+    results.forEach((r, i) => tally.set(r.c.sec, (tally.get(r.c.sec) || 0) + r.score / (i + 1)));
+    sections.forEach(sec => { if (terms(sec.label).some(x => want.has(x))) tally.set(sec, (tally.get(sec) || 0) + 50); });
+    return [...tally.entries()].sort((a, b) => b[1] - a[1])[0];
+  }
+
+  // Answer one focused question with the best passage, or say the pack doesn't cover it
+  function answerOne(text, useContext) {
+    const t = norm(text);
     const words = t.split(/\s+/);
-    if (/^(hi|hello|hey|hiya|howdy|good (morning|afternoon|evening))\b/.test(t) && words.length <= 4)
-      return { text: 'Hello! I can answer questions about ReachLMS using the due diligence pack. What would you like to know?' };
-    if (/\b(thanks|thank you|cheers|great|perfect|awesome)\b/.test(t) && words.length <= 5)
-      return { text: 'You’re welcome. Ask me anything else about ReachLMS whenever you like.' };
-    if (/who are you|what are you|are you (a )?(bot|human|real|ai)|how do you work/.test(t))
-      return { text: 'I’m the ReachLMS guide. I find the part of the ReachLMS due diligence pack that answers your question and explain it in plain words. If the pack doesn’t cover something, I’ll tell you instead of guessing.' };
-    if (/^(tell me )?more\b|^go on\b|^continue\b|^next\b|^and\??$|^what else/.test(t) && lastCard) {
-      const nxt = related(lastCard)[0];
-      if (nxt) return { card: nxt, opener: 'Here’s more on ' + clean(lastCard.sec.label) + '. ' };
-    }
     let query = text;
     const qts = queryTerms(text);
     const alone = search(text).results[0];
     const clear = alone && alone.cover === 1 && alone.score >= 2.5;
-    if (lastCard && !clear && words.length <= 5 && (/\b(it|that|this|those|they|them|its|there)\b/.test(t) || qts.length <= 1)) query = text + ' ' + lastCard.short;
+    if (useContext && lastCard && !/^Here’s/.test(lastCard.say) && !clear && words.length <= 5 && (/\b(it|that|this|those|they|them|its|there)\b/.test(t) || (qts.length === 1 && qts[0].startsWith('#') && words.length <= 3))) {
+      // Lean on the previous answer only if that keeps us in the same topic
+      const ctx = search(text + ' ' + lastCard.short).results[0];
+      if (ctx && ctx.c.sec === lastCard.sec) query = text + ' ' + lastCard.short;
+    }
     const big = (t.replace(/,/g, '').match(/\b\d{3,6}\b/g) || []).some(n => +n >= 200);
     if (big && /student|user|learner|people|staff|cost|price|pay|tier|size/.test(t)) query += ' tiers capacity how many students tier size';
     const { results } = search(query);
     const top = results[0];
-    const unknown = (text.toLowerCase().match(/[a-z0-9-]+/g) || []).filter(w => {
+    const unknown = (t.match(/[a-z0-9-]+/g) || []).filter(w => {
       if (w.length < 4 || STOP.has(w) || /\d/.test(w)) return false;
       const s = stem(w); const k = CANON.get(s) || s;
       if (k.startsWith('#') || df.has(k)) return false;
       return !vocab.some(v => !v.startsWith('#') && v.startsWith(k));
     });
-    if (unknown.length && top && top.cover < 1)
-      return { text: 'The due diligence pack doesn’t mention “' + unknown.join('”, “') + '”, so I can’t answer that part without guessing. The closest topic it does cover is below.', card: top.c, citeOnly: true };
-    if (!top || top.score < 1.1)
-      return { text: 'I couldn’t find that in the due diligence pack, so I won’t guess. Try asking another way, browse the topics below, or email the team at education@youmultiply.com.' };
-    return { card: top.c, opener: top.cover < 0.6 ? 'Here’s the closest answer I found in the pack. ' : pick() };
+    if (unknown.length && unknown.length >= qts.filter(x => !x.startsWith('#')).length && !qts.some(x => x.startsWith('#'))) return { miss: true, unknown: [], near: null, results: [] };
+    if (unknown.length && top && top.cover < 1) return { miss: true, unknown, near: top.c, results };
+    if (!top || top.score < 1.1) return { miss: true, unknown: [], near: null, results };
+    return { card: top.c, results, closest: top.cover < 0.6 };
+  }
+
+  // Split "X and Y" or "X? Y?" into separate questions when both halves stand on their own
+  function splitQuestion(text) {
+    const parts = text.split(/\?\s+|;\s*|\s+(?:and also|as well as|plus|also)\s+|\s+and\s+(?=(?:what|how|is|are|can|do|does|will|who|where|when|which|why)\b)/i).map(s => s.trim()).filter(Boolean);
+    if (parts.length < 2) return null;
+    const good = parts.filter(p => specific(p).length >= 1 && (search(p).results[0] || {}).score >= 1.3);
+    return good.length >= 2 ? good.slice(0, 4) : null;
+  }
+
+  function plan(text) {
+    if (text.startsWith('#') && byId.has(text.slice(1))) return single(C(text.slice(1)));
+    const t = norm(text).replace(/[!?.]+$/, '').trim();
+    const words = t.split(/\s+/);
+    if (/^(hi|hello|hey|hiya|howdy|good (morning|afternoon|evening))\b/.test(t) && words.length <= 4)
+      return { blocks: [P('Hello! I can answer questions about ReachLMS using the due diligence pack, from single facts to full overviews. What would you like to know?')] };
+    if (/\b(thanks|thank you|cheers|great|perfect|awesome)\b/.test(t) && words.length <= 5)
+      return { blocks: [P('You’re welcome. Ask me anything else about ReachLMS whenever you like.')] };
+    if (/\b(who are you|what are you|are you (a )?(bot|human|real|ai)|how do you work)\b/.test(t))
+      return { blocks: [P('I’m the ReachLMS guide. I find the parts of the ReachLMS due diligence pack that answer your question and explain them in plain words, listing every section I used. If the pack doesn’t cover something, I’ll say so instead of guessing.')] };
+    if (/^(tell me )?more\b|^go on\b|^continue\b|^next\b|^and\??$|^what else/.test(t) && lastCard) {
+      const nxt = related(lastCard)[0];
+      if (nxt) return single(nxt, 'Here’s more on ' + clean(lastCard.sec.label) + '. ');
+    }
+
+    // Broad questions that need several sections
+    const spec = specific(text);
+    if (/\b(what('s| is| are|s)? (included|in it|in reachlms|part of)|what do (we|i|you) get|what (does|do) (it|reachlms|the platform|you) (do|offer|have|include|come with|provide)|features?|capabilit|functionality|what can (it|reachlms) do|everything (it|reachlms) (does|offers|includes))\b/.test(t) && spec.length === 0)
+      return COMPOSITES.features();
+    if (/\b(how does (reachlms|it|this|the platform) work|how (reachlms|it) works|(overview|summary) of reachlms|tell me (all )?about reachlms|explain reachlms|summari[sz]e (reachlms|everything|the pack)|walk me through (reachlms|everything|it))\b/.test(t))
+      return COMPOSITES.howItWorks();
+    if (/\b(cost|costs|price|prices|pricing|fees?)\b/.test(t) && /\b(all|every|full|total|breakdown|overview|summary|everything|list|costs|fees|prices|complete)\b/.test(t) && spec.filter(x => x !== '#pric').length === 0)
+      return COMPOSITES.costs();
+    if (/\b(compare|compared|comparison|versus|vs|difference|different|better than|instead of)\b/.test(t) && /\b(canvas|instructure)\b/.test(t) && !/\b(support|price|cost|quiz|app|security|annotat)/.test(t))
+      return COMPOSITES.compare();
+    if (/\b(limitations?|gaps?|missing|not included|is not included|can not do|cannot do|(does|do|can) not (do|have|include|offer|support|cover)|what (does|do|can) not (it|reachlms|you) (do|have|offer|include)|weakness(es)?|drawbacks?|what('s| is) lacking)\b/.test(t) && spec.filter(x => !/^(limit|gap|miss|weak|drawback|lack|#)/.test(x)).length === 0)
+      return COMPOSITES.limits();
+    if (/\b(risks?|downsides?|concerns?|what could go wrong|worst case)\b/.test(t) && spec.filter(x => !/^(risk|downsid|concern|#)/.test(x)).length <= 1)
+      return COMPOSITES.risks();
+
+    // Several questions in one message
+    const parts = splitQuestion(text);
+    if (parts) {
+      const blocks = [P('You asked ' + parts.length + ' things, so I’ll take them one at a time.')];
+      const sources = [];
+      parts.forEach(q => {
+        const a = answerOne(q, false);
+        blocks.push(H(q.replace(/^\w/, ch => ch.toUpperCase()).replace(/[?.!]*$/, '?')));
+        if (a.card) { blocks.push(P(a.card.say)); if (!sources.includes(a.card)) sources.push(a.card); }
+        else blocks.push(P('The pack doesn’t cover this part, so I won’t guess.'));
+      });
+      return { blocks, sources, focus: sources[0] };
+    }
+
+    // Topic overviews: "tell me about security", "explain migration"
+    if (/\b(tell me (all )?about|overview|everything about|explain|walk me through|summar(y|ise|ize)|what should (we|i) know about|the basics of)\b/.test(t)) {
+      const topic = t.replace(/\b(tell me (all )?about|give me an overview of|an overview of|overview of|overview|everything about|explain|walk me through|summar(y|ise|ize) of|summar(y|ise|ize)|what should (we|i) know about|the basics of)\b/g, ' ');
+      const { results } = search(topic);
+      if (results.length) {
+        const [sec] = bestSection(results, topic);
+        if (sec && sec.cards.length >= 2) return sectionOverview(sec);
+      }
+    }
+
+    // A single, focused question
+    const a = answerOne(text, true);
+    if (a.miss && a.near) return { blocks: [P('The due diligence pack doesn’t mention “' + a.unknown.join('”, “') + '”, so I can’t answer that part without guessing. The closest topic it does cover is listed below.')], sources: [a.near], closestOnly: true };
+    if (a.miss) return { blocks: [P('I couldn’t find that in the due diligence pack, so I won’t guess. Try asking another way, browse the topics below, or email the team at education@youmultiply.com.')] };
+    const card = a.card;
+    // Broad single-topic answers pull in closely related passages too
+    const extra = a.results.slice(1, 4).filter(r => r.c.sec === card.sec && r.score >= a.results[0].score * 0.8 && r.cover === 1).map(r => r.c);
+    if (extra.length && !a.closest) {
+      const out = single(card, a.closest ? 'Here’s the closest answer I found in the pack. ' : pick());
+      out.blocks.push(P('Related points from the same part of the pack:'));
+      out.blocks.push(L(extra.map(c => ({ label: c.short.replace(/[“”]/g, ''), text: c.say }))));
+      out.sources = [card].concat(extra);
+      return out;
+    }
+    return single(card, a.closest ? 'Here’s the closest answer I found in the pack. ' : pick());
   }
   function related(c) {
     const same = c.sec.cards.filter(x => x !== c);
     return same.filter(x => x.posInSec > c.posInSec).concat(same.filter(x => x.posInSec < c.posInSec));
   }
 
+  /* ---------- Rendering ---------- */
   function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
   function setBusy(on) {
     sendBtn.classList.toggle('busy', on);
@@ -1421,89 +1627,117 @@ dialog.reader::backdrop { background: rgba(10, 16, 38, .6); }
     sendBtn.disabled = on ? false : !input.value.trim();
     topAvatar.classList.toggle('live', on);
   }
-  function citeButton(c, label) {
-    const b = el('button', 'cite'); b.type = 'button';
+  function citeButton(c, label, small) {
+    const b = el('button', 'cite' + (small ? ' sm' : '')); b.type = 'button';
     const tag = el('span', 'tag'); tag.textContent = c.n ? '§ ' + c.n : (/^[AB]$/.test(c.sec.n) ? 'Appendix' : 'Guide');
     const ct = el('span', 'ct');
     const ti = el('b'); ti.textContent = c.title;
-    const se = el('span'); se.textContent = (label || 'Source') + ' · ' + clean(secName(c.sec));
+    const se = el('span'); se.textContent = (label ? label + ' · ' : '') + clean(secName(c.sec));
     ct.append(ti, se);
-    const op = el('span', 'open', 'Open →');
-    b.append(tag, ct, op);
+    b.append(tag, ct, el('span', 'open', 'Open →'));
     b.addEventListener('click', () => openReader(c.id));
     return b;
   }
+  function typeInto(node, text, my) {
+    return new Promise(resolve => {
+      let i = 0, timer = null, done = false;
+      const caret = el('span', 'caret'); node.after(caret);
+      const finish = () => { if (done) return; done = true; clearTimeout(timer); node.textContent = text; caret.remove(); resolve(); };
+      finishNow = () => { skipAll = true; finish(); };
+      if (reduce || skipAll) { finish(); return; }
+      const speed = text.length > 220 ? 6 : 4;
+      const step = () => {
+        if (my !== job) { finish(); return; }
+        i = Math.min(text.length, i + speed + Math.floor(Math.random() * 3));
+        node.textContent = text.slice(0, i);
+        if (i >= text.length) finish(); else timer = setTimeout(step, 16);
+      };
+      step();
+    });
+  }
+  let skipAll = false;
 
   async function ask(raw) {
     const text = raw.trim(); if (!text) return;
     const my = ++job;
     if (finishNow) finishNow();
+    skipAll = false;
     asked++;
     document.getElementById('qcount').textContent = asked === 1 ? '1 question asked' : asked + ' questions asked';
 
-    // Clear the previous exchange
     const old = [...log.children];
     if (old.length && !reduce) { old.forEach(n => n.classList.add('leaving')); await wait(170); }
     if (my !== job) return;
     log.innerHTML = '';
+    skipAll = false;
 
     const me = el('div', 'turn me'); const q = el('div', 'q');
-    q.textContent = text.startsWith('#') && byId.has(text.slice(1)) ? byId.get(text.slice(1)).title : text;
+    q.textContent = text.startsWith('#') && byId.has(text.slice(1)) ? C(text.slice(1)).title : text;
     me.appendChild(q); log.appendChild(me);
 
     const bot = el('div', 'turn bot', BOT_ICON);
-    const name = el('div', 'bot-name', 'ReachLMS guide');
     const status = el('div', 'status', '<span class="shimmer">Searching the due diligence pack…</span>');
-    bot.append(name, status); log.appendChild(bot);
+    bot.append(el('div', 'bot-name', 'ReachLMS guide'), status); log.appendChild(bot);
     setBusy(true);
 
     const p = plan(text);
-    await wait(520);
+    const srcs = p.sources || [];
+    await wait(480);
     if (my !== job) return;
-    if (p.card && !p.citeOnly) {
-      status.innerHTML = '<span class="shimmer">Reading ' + (p.card.n ? '§ ' + p.card.n + ' in ' : '') + p.card.sec.label + '…</span>';
-      await wait(560);
+    if (srcs.length && !p.closestOnly) {
+      const secs = [...new Set(srcs.map(s => s.sec))];
+      status.innerHTML = '<span class="shimmer">' + (srcs.length === 1
+        ? 'Reading ' + (srcs[0].n ? '§ ' + srcs[0].n + ' in ' : '') + srcs[0].sec.label + '…'
+        : 'Reading ' + srcs.length + ' passages across ' + secs.length + (secs.length === 1 ? ' section' : ' sections') + '…') + '</span>';
+      await wait(srcs.length > 1 ? 800 : 520);
       if (my !== job) return;
     }
     status.remove();
 
-    const message = p.card && !p.citeOnly ? lead(p.opener, p.card.say) + p.card.say : p.text;
-    const ans = el('div', 'answer'); const para = el('p'); const caret = el('span', 'caret');
-    ans.append(para, caret); bot.appendChild(ans);
-
-    await new Promise(resolve => {
-      let i = 0, timer = null, done = false;
-      const finish = () => { if (done) return; done = true; clearTimeout(timer); para.textContent = message; caret.remove(); finishNow = null; resolve(); };
-      finishNow = finish;
-      if (reduce) { finish(); return; }
-      const step = () => {
-        if (my !== job) { finish(); return; }
-        i = Math.min(message.length, i + 3 + Math.floor(Math.random() * 3));
-        para.textContent = message.slice(0, i);
-        if (i >= message.length) finish(); else timer = setTimeout(step, 16);
-      };
-      step();
-    });
-    if (my !== job) return;
-
-    if (p.card) {
-      lastCard = p.card;
-      bot.appendChild(citeButton(p.card, p.citeOnly ? 'Closest topic' : 'Source'));
-      if (!p.citeOnly) {
-        const det = el('details', 'more', '<summary>Show the full passage from the pack</summary><div class="inner"></div>');
-        det.querySelector('.inner').innerHTML = p.card.html;
-        bot.appendChild(det);
+    const ans = el('div', 'answer'); bot.appendChild(ans);
+    const plain = [];
+    for (const b of p.blocks) {
+      if (my !== job) return;
+      if (b.t === 'p') { const n = el('p'); ans.appendChild(n); plain.push(b.text); await typeInto(n, b.text, my); }
+      else if (b.t === 'h') { const n = el('h4'); n.textContent = b.text; ans.appendChild(n); plain.push('\n' + b.text); }
+      else if (b.t === 'ul') {
+        const ul = el('ul'); ans.appendChild(ul);
+        for (const it of b.items) {
+          if (my !== job) return;
+          const li = el('li'); const lab = el('b'); lab.textContent = it.label + ': '; const sp = el('span');
+          li.append(lab, sp); ul.appendChild(li); plain.push('• ' + it.label + ': ' + it.text);
+          await typeInto(sp, it.text, my);
+        }
       }
     }
+    if (my !== job) return;
+    finishNow = null;
+
+    if (srcs.length) {
+      if (srcs.length === 1) bot.appendChild(citeButton(srcs[0], p.closestOnly ? 'Closest topic' : 'Source'));
+      else {
+        const box = el('div', 'sources');
+        const head = el('div', 'sources-head'); head.textContent = 'Sections referenced (' + srcs.length + ')';
+        const list = el('div', 'sources-list');
+        srcs.forEach(s => list.appendChild(citeButton(s, '', true)));
+        box.append(head, list); bot.appendChild(box);
+      }
+    }
+    if (p.detail) {
+      const det = el('details', 'more', '<summary>Show the full passage from the pack</summary><div class="inner"></div>');
+      det.querySelector('.inner').innerHTML = p.detail.html;
+      bot.appendChild(det);
+    }
+    lastCard = p.focus || (srcs.length === 1 && !p.closestOnly ? srcs[0] : null);
+
     const acts = el('div', 'actions');
     const copy = el('button', 'act', ICONS.copy); copy.type = 'button'; copy.setAttribute('aria-label', 'Copy answer');
     const up = el('button', 'act', ICONS.up); up.type = 'button'; up.setAttribute('aria-label', 'Good answer'); up.setAttribute('aria-pressed', 'false');
     const down = el('button', 'act', ICONS.down); down.type = 'button'; down.setAttribute('aria-label', 'Not helpful'); down.setAttribute('aria-pressed', 'false');
     const note = el('span', 'act-note');
     copy.addEventListener('click', () => {
-      const txt = message + (p.card && !p.citeOnly ? '\n\nSource: ' + (p.card.n ? p.card.n + ' ' : '') + p.card.title : '');
-      const ok = () => { note.textContent = 'Copied'; };
-      try { navigator.clipboard.writeText(txt).then(ok, () => { note.textContent = 'Copy not available here'; }); } catch (_) { note.textContent = 'Copy not available here'; }
+      const txt = plain.join('\n') + (srcs.length ? '\n\nSources: ' + srcs.map(s => (s.n ? s.n + ' ' : '') + s.title).join('; ') : '');
+      try { navigator.clipboard.writeText(txt).then(() => { note.textContent = 'Copied'; }, () => { note.textContent = 'Copy not available here'; }); } catch (_) { note.textContent = 'Copy not available here'; }
     });
     up.addEventListener('click', () => { up.setAttribute('aria-pressed', 'true'); down.setAttribute('aria-pressed', 'false'); note.textContent = 'Thanks for the feedback.'; });
     down.addEventListener('click', () => { down.setAttribute('aria-pressed', 'true'); up.setAttribute('aria-pressed', 'false'); note.textContent = 'Thanks. Try asking another way, or email education@youmultiply.com.'; });
@@ -1532,7 +1766,7 @@ dialog.reader::backdrop { background: rgba(10, 16, 38, .6); }
   // Opening state
   const hello = el('div', 'turn bot', BOT_ICON);
   hello.append(el('div', 'bot-name', 'ReachLMS guide'));
-  const hi = el('div', 'answer'); hi.innerHTML = '<p>Hi! I’m the ReachLMS guide. Ask me about pricing, security, migration, support or anything else in the due diligence pack, and I’ll explain it in plain words with a link to the exact section I used.</p>';
+  const hi = el('div', 'answer'); hi.innerHTML = '<p>Hi! I’m the ReachLMS guide. Ask me anything in the due diligence pack, from a single fact to a full overview, and I’ll explain it in plain words with links to every section I used.</p>';
   hello.append(hi); log.appendChild(hello);
 
   /* ---------- Topic tiles ---------- */
