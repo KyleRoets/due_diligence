@@ -9,274 +9,272 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: navy brand header with ask-anything search, navy hero with suggested questions, then a reader that shows one short answer card at a time beside a topic rail. */
+/* Layout: help-centre style. A navy band holds the logo and the chat; below it, plain topic tiles open each guide entry in a reader sheet. */
 :root {
-  --navy-950: #0b1229;
   --navy: #18213d;
-  --navy-800: #1f2a4a;
-  --navy-700: #2a3760;
+  --navy-2: #222d50;
+  --navy-line: rgba(255,255,255,.14);
   --gold: #E8C77E;
   --gold-deep: #D3A953;
   --on-navy: #ffffff;
   --on-navy-muted: #b9c1d9;
-  --bg: #f3f4f8;
+  --bg: #ffffff;
+  --soft: #f3f4f8;
   --surface: #ffffff;
   --fg: #161f3a;
   --muted: #5a6382;
-  --line: #dde1eb;
+  --line: #e1e4ed;
   --accent: #8a6516;
   --mark: #f7e3b3;
+  --bot: #f1f3f8;
   --display: "Source Serif 4", Georgia, "Times New Roman", serif;
   --body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --wrap: 1200px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e1530; --surface: #172142; --fg: #eef1f8; --muted: #9ea8c6; --line: #2a3660;
-    --accent: #E8C77E; --mark: #5b4615; color-scheme: dark;
+    --bg: #0e1530; --soft: #131b38; --surface: #172142; --fg: #eef1f8; --muted: #9ea8c6; --line: #2a3660;
+    --accent: #E8C77E; --mark: #5b4615; --bot: #1f2a4f; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0e1530; --surface: #172142; --fg: #eef1f8; --muted: #9ea8c6; --line: #2a3660;
-  --accent: #E8C77E; --mark: #5b4615; color-scheme: dark;
+  --bg: #0e1530; --soft: #131b38; --surface: #172142; --fg: #eef1f8; --muted: #9ea8c6; --line: #2a3660;
+  --accent: #E8C77E; --mark: #5b4615; --bot: #1f2a4f; color-scheme: dark;
 }
 * { box-sizing: border-box; }
-body { background: var(--bg); color: var(--fg); font: 400 16px/1.65 var(--body); -webkit-font-smoothing: antialiased; }
-body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--navy); }
+html, body { overflow-x: hidden; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 400 16px/1.6 var(--body); -webkit-font-smoothing: antialiased; }
 a { color: inherit; }
-button { font: inherit; }
-.wrap { max-width: var(--wrap); margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+button { font: inherit; color: inherit; }
 h1, h2, h3 { margin: 0; text-wrap: balance; }
-:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 2px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 
-/* Header */
-.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--navy); color: var(--on-navy); border-bottom: 1px solid rgba(255,255,255,.08); }
-.top .wrap { display: flex; align-items: center; gap: 28px; padding-block: 12px; flex-wrap: wrap; }
-.logo { display: block; flex: 0 0 auto; line-height: 0; }
-.logo img { height: 42px; width: auto; }
-.search { flex: 1 1 340px; position: relative; }
-.search .field { position: relative; display: flex; align-items: center; }
-.search svg { position: absolute; left: 18px; width: 18px; height: 18px; stroke: var(--gold); pointer-events: none; }
-.search input { width: 100%; font: 500 15px var(--body); color: #fff; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.18); padding: 12px 84px 12px 46px; border-radius: 999px; }
-.search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
-.search input::placeholder { color: #9aa4c4; }
-.search input:focus { outline: none; border-color: var(--gold); background: rgba(255,255,255,.11); }
-.search .clear { position: absolute; right: 8px; background: none; border: 0; color: var(--on-navy-muted); cursor: pointer; padding: 6px 12px; font-size: 13px; border-radius: 999px; }
-.search .clear:hover { color: #fff; }
-.results { position: absolute; left: 0; right: 0; top: calc(100% + 8px); background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 24px 60px rgba(8, 14, 36, .35); max-height: min(70vh, 560px); overflow: auto; padding: 8px; }
-.results .hint { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 8px 12px 6px; }
-.res { display: grid; gap: 2px; width: 100%; text-align: left; background: none; border: 0; color: inherit; padding: 10px 12px; border-radius: 12px; cursor: pointer; }
-.res:hover, .res[aria-selected="true"] { background: var(--bg); }
-.res .where { font-size: 12px; font-weight: 600; color: var(--accent); display: flex; gap: 8px; align-items: center; }
-.res .best { font-size: 11px; color: var(--navy); background: var(--gold); border-radius: 999px; padding: 1px 8px; letter-spacing: .02em; }
-.res .ttl { font: 600 16px/1.3 var(--display); }
-.res .snip { font-size: 14px; color: var(--muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.res mark, .card mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 2px; }
-.noresult { padding: 14px 12px; font-size: 14px; color: var(--muted); }
-.noresult b { color: var(--fg); }
+/* Navy band: logo + chat */
+.band { background: radial-gradient(800px 380px at 0% 100%, rgba(150, 90, 120, .22), transparent 60%), radial-gradient(700px 360px at 100% 0%, rgba(232, 199, 126, .10), transparent 60%), var(--navy); color: var(--on-navy); }
+.band .wrap { padding-block: 22px 48px; }
+.logo { display: inline-block; line-height: 0; }
+.logo img { height: 40px; width: auto; }
+.intro { text-align: center; margin: 36px auto 26px; max-width: 760px; display: grid; gap: 10px; }
+.intro h1 { font: 700 clamp(32px, 5vw, 50px)/1.08 var(--display); letter-spacing: -0.01em; }
+.intro h1 em { font-style: normal; color: var(--gold); }
+.intro p { margin: 0; color: var(--on-navy-muted); font-size: 17px; }
 
-/* Hero */
-.hero { background: radial-gradient(900px 420px at 0% 100%, rgba(150, 90, 120, .28), transparent 60%), radial-gradient(700px 400px at 100% 0%, rgba(232, 199, 126, .10), transparent 60%), var(--navy); color: var(--on-navy); }
-.hero .wrap { padding-block: 64px 48px; display: grid; gap: 26px; }
-.eyebrow { font: 600 12px var(--body); letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
-.hero h1 { font: 700 clamp(38px, 6vw, 68px)/1.04 var(--display); letter-spacing: -0.015em; max-width: 15ch; }
-.hero h1 em { font-style: normal; color: var(--gold); }
-.hero .lede { font-size: 19px; line-height: 1.6; color: #d9deec; max-width: 60ch; margin: 0; }
-.hero .lede strong { color: #fff; font-weight: 600; }
-.asks { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.asks .lbl { font-size: 14px; color: var(--on-navy-muted); margin-right: 4px; }
-.ask { font: 500 15px var(--body); color: #fff; background: transparent; border: 1.5px solid rgba(255,255,255,.35); padding: 9px 18px; border-radius: 999px; cursor: pointer; }
-.ask:hover { border-color: var(--gold); color: var(--gold); }
-.ask.primary { background: linear-gradient(180deg, #EDCF86, var(--gold-deep)); border-color: transparent; color: var(--navy); font-weight: 600; box-shadow: 0 8px 22px rgba(211, 169, 83, .3); }
-.ask.primary:hover { color: var(--navy); filter: brightness(1.05); }
-.facts { list-style: none; margin: 8px 0 0; padding: 22px 0 0; border-top: 1px solid rgba(255,255,255,.12); display: flex; flex-wrap: wrap; gap: 12px 32px; }
-.facts button { background: none; border: 0; color: #d9deec; padding: 0; cursor: pointer; display: inline-flex; gap: 10px; align-items: baseline; font-size: 16px; text-align: left; }
-.facts button::before { content: "✦"; color: var(--gold); font-size: 13px; }
-.facts button:hover { color: #fff; text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 4px; }
+.chat { max-width: 780px; margin: 0 auto; background: var(--surface); color: var(--fg); border-radius: 24px; box-shadow: 0 30px 70px rgba(5, 10, 30, .35); overflow: hidden; display: grid; }
+.chat-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.who { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--navy); display: grid; place-items: center; flex: 0 0 auto; }
+.avatar svg { width: 18px; height: 18px; }
+.who small { display: block; font-weight: 400; font-size: 12px; color: var(--muted); }
+.dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2fb36d; margin-right: 5px; vertical-align: 1px; }
+.ghost { white-space: nowrap; flex: 0 0 auto; background: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--fg); }
+.ghost:hover { border-color: var(--gold-deep); }
+.log { height: min(52vh, 460px); overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; scroll-behavior: smooth; }
+.msg { display: flex; gap: 10px; max-width: 100%; }
+.msg .avatar { width: 28px; height: 28px; margin-top: 2px; }
+.msg .avatar svg { width: 14px; height: 14px; }
+.msg.me { justify-content: flex-end; }
+.bubble { padding: 11px 15px; border-radius: 18px; max-width: min(620px, 86%); min-width: 0; }
+.me .bubble { background: var(--navy); color: #fff; border-bottom-right-radius: 6px; }
+.bot .bubble { background: var(--bot); border-bottom-left-radius: 6px; }
+.bubble p { margin: 0; }
+.bubble p + * { margin-top: 10px; }
+.src { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 13px; }
+.src .lbl { color: var(--muted); }
+.link { background: none; border: 0; padding: 0; cursor: pointer; color: var(--accent); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-align: left; }
+details.more { font-size: 14px; }
+details.more summary { cursor: pointer; color: var(--accent); font-weight: 600; list-style: none; }
+details.more summary::-webkit-details-marker { display: none; }
+details.more summary::before { content: "+ "; }
+details.more[open] summary::before { content: "− "; }
+details.more .inner { margin-top: 10px; padding: 12px 14px; background: var(--surface); border-radius: 12px; border: 1px solid var(--line); }
+.inner p { margin: 0 0 10px; }
+.inner > :last-child { margin-bottom: 0; }
+.inner ul { margin: 0 0 10px; padding-left: 20px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { background: var(--surface); border: 1.5px solid var(--line); border-radius: 999px; padding: 6px 13px; font-size: 14px; cursor: pointer; text-align: left; }
+.chip:hover { border-color: var(--gold-deep); color: var(--accent); }
+.chip.gold { background: linear-gradient(180deg, #EDCF86, var(--gold-deep)); border-color: transparent; color: #18213d; font-weight: 600; }
+.follow { margin-left: 38px; display: grid; gap: 6px; }
+.follow .hint { font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: .04em; }
+.rate { display: flex; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); }
+.rate button { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; font-size: 12px; cursor: pointer; color: var(--muted); }
+.rate button:hover { color: var(--fg); border-color: var(--gold-deep); }
+.typing { display: inline-flex; gap: 4px; padding: 4px 2px; }
+.typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: blink 1s infinite ease-in-out; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+.composer { display: flex; gap: 10px; padding: 12px; border-top: 1px solid var(--line); background: var(--surface); }
+.composer input { flex: 1; min-width: 0; font: 500 16px var(--body); color: var(--fg); background: var(--soft); border: 1.5px solid transparent; border-radius: 999px; padding: 12px 18px; }
+.composer input:focus { outline: none; border-color: var(--gold-deep); background: var(--surface); }
+.send { flex: 0 0 auto; background: linear-gradient(180deg, #EDCF86, var(--gold-deep)); border: 0; border-radius: 999px; padding: 0 20px; font-weight: 700; color: #18213d; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.send svg { width: 16px; height: 16px; }
+.send:hover { filter: brightness(1.05); }
+.trust { text-align: center; color: var(--on-navy-muted); font-size: 13px; margin: 14px 0 0; }
+.trust::before { content: "✦ "; color: var(--gold); }
 
-/* Reader */
-.guide { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 40px; padding-block: 40px 72px; }
-.guide-head { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px; }
-.guide-head h2 { font: 700 30px/1.15 var(--display); }
-.guide-head p { margin: 4px 0 0; color: var(--muted); }
-.rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 86px); align-self: start; max-height: calc(100vh - 110px); overflow: auto; padding-right: 4px; }
-.rail ol { list-style: none; margin: 0; padding: 0; }
-.rail > ol > li + li { border-top: 1px solid var(--line); }
-.sec-btn { width: 100%; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 8px; align-items: baseline; background: none; border: 0; color: var(--fg); text-align: left; padding: 10px 6px; cursor: pointer; font-size: 15px; font-weight: 500; border-radius: 8px; }
-.sec-btn:hover { background: var(--surface); }
-.sec-btn .n { font-size: 12px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
-.sec-btn .c { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
-li.on > .sec-btn { font-weight: 700; }
-.cards { margin: 0 0 10px 36px !important; border-left: 2px solid var(--line); }
-.cards button { display: block; width: 100%; text-align: left; background: none; border: 0; color: var(--muted); font-size: 14px; line-height: 1.35; padding: 6px 10px; margin-left: -2px; border-left: 2px solid transparent; cursor: pointer; }
-.cards button:hover { color: var(--fg); }
-.cards button[aria-current="true"] { color: var(--fg); font-weight: 600; border-left-color: var(--gold-deep); }
-
-.stage { min-width: 0; display: grid; gap: 16px; align-content: start; scroll-margin-top: 90px; }
-.picker { display: none; }
-.picker label { display: block; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-.picker select { width: 100%; font: 500 15px var(--body); padding: 11px 12px; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: clamp(22px, 4vw, 40px); display: grid; gap: 18px; box-shadow: 0 1px 2px rgba(16, 24, 56, .04), 0 10px 30px rgba(16, 24, 56, .05); }
-.card-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; font-size: 13px; color: var(--muted); }
-.card-meta .crumb { font-weight: 600; color: var(--accent); letter-spacing: .02em; }
-.progress { display: flex; gap: 4px; }
-.progress span { height: 4px; flex: 1; border-radius: 4px; background: var(--line); }
-.progress span.done { background: var(--gold-deep); }
-.card h3 { font: 700 clamp(24px, 3vw, 32px)/1.18 var(--display); letter-spacing: -0.01em; }
-.card h3 .qn { color: var(--accent); margin-right: 10px; font-variant-numeric: tabular-nums; }
-.card-body { max-width: 68ch; min-width: 0; }
-.card-body p { margin: 0 0 14px; }
-.card-body > :last-child { margin-bottom: 0; }
-.card-body ul, .card-body ol { margin: 0 0 14px; padding-left: 22px; }
-.card-body li { margin-bottom: 6px; }
-.card-body li::marker { color: var(--gold-deep); }
-.card-body .note { font-size: 14px; color: var(--muted); }
-.xref { color: var(--accent); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
-.nav { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.nav button { display: grid; gap: 2px; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 18px; cursor: pointer; color: var(--fg); min-width: 0; }
-.nav button:hover:not(:disabled) { border-color: var(--gold-deep); }
-.nav button:disabled { opacity: .4; cursor: default; }
-.nav .dir { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
-.nav .lab { font-size: 15px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.nav .next { text-align: right; }
-.keys { font-size: 13px; color: var(--muted); text-align: center; }
-.keys kbd { font: 600 12px var(--body); border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 1px 7px; }
-@media (max-width: 920px) {
-  .guide { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-block: 28px 56px; }
-  .rail { display: none; }
-  .picker { display: block; }
-  .keys { display: none; }
-}
-@media (max-width: 520px) {
-  .nav .lab { white-space: normal; font-size: 14px; }
-  .top .wrap { gap: 12px; }
-  .logo img { height: 34px; }
-}
-
-/* Tables and checklists inside cards */
-.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; margin: 4px 0 14px; }
-table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.45; }
-th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+/* Tables inside answers */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; margin: 4px 0 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; line-height: 1.45; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--line); }
 tbody tr:last-child > * { border-bottom: 0; }
-thead th { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); background: var(--bg); white-space: nowrap; }
+thead th { font-size: 11.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); background: var(--soft); white-space: nowrap; }
 tbody th { font-weight: 600; }
 .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
-.wide table { min-width: 720px; }
-.mid table { min-width: 560px; }
+.wide table { min-width: 680px; }
+.mid table { min-width: 520px; }
 .yes { color: #157a46; font-weight: 600; }
 .no { color: var(--muted); }
 :root[data-theme="dark"] .yes { color: #5fd398; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .yes { color: #5fd398; } }
-.check { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-.check div { display: grid; grid-template-columns: 26px minmax(0, 1.2fr) minmax(0, 1fr); gap: 12px; padding: 10px 14px; border-top: 1px solid var(--line); font-size: 14px; }
-.check div:first-child { border-top: 0; background: var(--bg); font-weight: 600; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.note { font-size: 13px; color: var(--muted); }
+.check { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.check div { display: grid; grid-template-columns: 24px minmax(0, 1.2fr) minmax(0, 1fr); gap: 10px; padding: 8px 12px; border-top: 1px solid var(--line); font-size: 13.5px; }
+.check div:first-child { border-top: 0; background: var(--soft); font-weight: 600; font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
 .check i { font-style: normal; color: var(--accent); font-weight: 700; }
-@media (max-width: 560px) { .check div { grid-template-columns: 22px minmax(0, 1fr); } .check div > :last-child { grid-column: 2; } }
+.xref { color: var(--accent); font-weight: 600; }
+mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 2px; }
 
-/* Footer */
-.foot { background: var(--navy); color: #d9deec; }
-.foot .wrap { padding-block: 56px; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 48px; }
-.foot h2 { font: 700 34px/1.1 var(--display); color: #fff; margin: 10px 0 16px; }
-.foot h2 em { font-style: normal; color: var(--gold); }
-.steps { list-style: none; margin: 0 0 20px; padding: 0; display: grid; gap: 10px; }
-.steps li { display: flex; gap: 10px; }
-.steps li::before { content: "✦"; color: var(--gold); font-size: 13px; padding-top: 3px; }
-.fine { font-size: 13px; color: #96a0bf; margin: 0; }
-.contact { display: grid; gap: 10px; align-content: start; font-size: 15px; }
-.contact img { height: 38px; width: auto; margin-bottom: 8px; }
-.contact .lbl { font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
-.copy { font: 600 13px var(--body); color: var(--navy); background: var(--gold); border: 0; padding: 4px 12px; border-radius: 999px; cursor: pointer; margin-left: 8px; }
-@media (max-width: 760px) { .foot .wrap { grid-template-columns: minmax(0, 1fr); gap: 32px; } }
-@media (prefers-reduced-motion: no-preference) { .card { animation: rise .22s ease-out; } @keyframes rise { from { transform: translateY(6px); } to { transform: none; } } }
+/* Topics */
+.topics { padding-block: 56px 40px; }
+.topics-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 8px 20px; margin-bottom: 22px; }
+.topics-head h2 { font: 700 30px/1.15 var(--display); }
+.topics-head p { margin: 0; color: var(--muted); }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 860px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.tile { border: 1px solid var(--line); border-radius: 18px; padding: 18px 18px 14px; display: grid; gap: 8px; align-content: start; background: var(--surface); transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; }
+.tile:hover { transform: translateY(-2px); border-color: var(--gold-deep); box-shadow: 0 10px 24px rgba(16, 24, 56, .08); }
+.tile-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.tile h3 { font: 700 19px/1.25 var(--display); }
+.tile .n { font-size: 12px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+.tile p { margin: 0; font-size: 14px; color: var(--muted); }
+.tile ul { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 2px; }
+.tile li button { background: none; border: 0; padding: 4px 0; font-size: 14px; text-align: left; cursor: pointer; color: var(--fg); }
+.tile li button:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.tile .all { justify-self: start; background: none; border: 0; padding: 4px 0 0; font-size: 13px; font-weight: 700; color: var(--accent); cursor: pointer; }
+
+.end { border-top: 1px solid var(--line); padding-block: 22px 32px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); }
+.copy { font: 600 12px var(--body); background: var(--soft); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; cursor: pointer; margin-left: 6px; color: var(--fg); }
+
+/* Reader sheet */
+dialog.reader { border: 0; padding: 0; border-radius: 22px; width: min(760px, calc(100vw - 32px)); max-height: min(86vh, 820px); background: var(--surface); color: var(--fg); box-shadow: 0 40px 90px rgba(5, 10, 30, .45); }
+dialog.reader::backdrop { background: rgba(10, 16, 38, .6); }
+.sheet { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; max-height: min(86vh, 820px); }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--line); }
+.sheet-head .crumb { font-size: 13px; font-weight: 700; color: var(--accent); }
+.sheet-head .count { font-size: 12px; color: var(--muted); }
+.x { background: var(--soft); border: 0; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 18px; line-height: 1; flex: 0 0 auto; }
+.sheet-body { overflow-y: auto; padding: 22px 24px; display: grid; gap: 14px; align-content: start; }
+.progress { display: flex; gap: 4px; }
+.progress span { height: 4px; flex: 1; border-radius: 4px; background: var(--line); }
+.progress span.done { background: var(--gold-deep); }
+.sheet-body h3 { font: 700 clamp(22px, 3vw, 28px)/1.2 var(--display); }
+.sheet-body h3 .qn { color: var(--accent); margin-right: 8px; }
+.sheet-body .content p { margin: 0 0 12px; }
+.sheet-body .content ul { margin: 0 0 12px; padding-left: 22px; }
+.sheet-body .content li { margin-bottom: 4px; }
+.sheet-body .content > :last-child { margin-bottom: 0; }
+.sheet-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px 20px 18px; border-top: 1px solid var(--line); }
+.sheet-nav button { display: grid; gap: 2px; text-align: left; background: var(--soft); border: 1px solid transparent; border-radius: 14px; padding: 10px 14px; cursor: pointer; min-width: 0; }
+.sheet-nav button:hover:not(:disabled) { border-color: var(--gold-deep); }
+.sheet-nav button:disabled { opacity: .4; cursor: default; }
+.sheet-nav .dir { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.sheet-nav .lab { font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sheet-nav .next { text-align: right; }
+@media (max-width: 560px) {
+  .band .wrap { padding-block: 16px 32px; }
+  .logo img { height: 34px; }
+  .intro { margin: 24px auto 20px; }
+  .log { height: 58vh; padding: 14px; }
+  .bubble { max-width: 92%; }
+  .follow { margin-left: 0; }
+  .send span { display: none; }
+  .send { padding: 0 16px; }
+  dialog.reader { width: 100vw; max-width: 100vw; max-height: 100%; height: 100%; border-radius: 0; margin: 0; }
+  .sheet { max-height: 100%; height: 100%; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .sheet-nav .lab { white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) { .tile, .log { transition: none; scroll-behavior: auto; } .typing i { animation: none; opacity: .6; } }
 </style>
 </head>
 <body>
-
-<header class="top">
+<section class="band">
   <div class="wrap">
-    <a class="logo" href="#top" aria-label="YouMultiply Ecosystem, back to top"><img src="reachlms-logo.svg" alt="YouMultiply Ecosystem" width="204" height="42"></a>
-    <form class="search" role="search" id="search-form" autocomplete="off">
-      <div class="field">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <label for="q" class="sr">Ask a question about ReachLMS</label>
-        <input id="q" type="search" placeholder="Ask anything, e.g. “How much does it cost?”" aria-controls="results" aria-expanded="false" aria-autocomplete="list">
-        <button type="button" class="clear" id="clear" hidden>Clear</button>
-      </div>
-      <div class="results" id="results" role="listbox" hidden></div>
-    </form>
-  </div>
-</header>
-
-<section class="hero" id="top">
-  <div class="wrap">
-    <div class="eyebrow">ReachLMS · Due diligence guide</div>
-    <h1>Every question about ReachLMS, <em>answered.</em></h1>
-    <p class="lede"><strong>ReachLMS is the open-source Canvas LMS hosted, extended and supported by YouMultiply.</strong> Ask a question in your own words, or step through the guide one short answer at a time.</p>
-    <div class="asks" aria-label="Suggested questions">
-      <span class="lbl">Try asking</span>
-      <button class="ask primary" type="button">How much does it cost?</button>
-      <button class="ask" type="button">Is our data secure?</button>
-      <button class="ask" type="button">How long does migration take?</button>
-      <button class="ask" type="button">Can we leave easily?</button>
-      <button class="ask" type="button">Will faculty need retraining?</button>
-      <button class="ask" type="button">Is there a mobile app?</button>
+    <a class="logo" href="#" aria-label="YouMultiply Ecosystem"><img src="reachlms-logo.svg" alt="YouMultiply Ecosystem" width="194" height="40"></a>
+    <div class="intro">
+      <h1>Hi there. What would you like to know about <em>ReachLMS?</em></h1>
+      <p>Ask in your own words. Every answer comes straight from the ReachLMS due diligence pack.</p>
     </div>
-    <ul class="facts">
-      <li><button type="button" data-open="q12-1">From $7,800 a year, no per-user fees</button></li>
-      <li><button type="button" data-open="q7-2-2">Live in 2–8 weeks</button></li>
-      <li><button type="button" data-open="q6-1">99.9% uptime commitment</button></li>
-      <li><button type="button" data-open="q4-1">Your own dedicated instance</button></li>
-      <li><button type="button" data-open="q12-5">3-month money-back guarantee</button></li>
-    </ul>
+
+    <div class="chat" role="region" aria-label="Ask the ReachLMS guide">
+      <div class="chat-top">
+        <div class="who">
+          <span class="avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#E8C77E" stroke-width="2.2" stroke-linecap="round"><path d="M4 6l16 12M20 6L4 18"/></svg></span>
+          <span>ReachLMS guide<small><span class="dot"></span>Answers only from the pack</small></span>
+        </div>
+        <button class="ghost" type="button" id="surprise">Surprise me</button>
+      </div>
+      <div class="log" id="log" aria-live="polite"></div>
+      <form class="composer" id="composer" autocomplete="off">
+        <label for="ask" class="sr">Your question</label>
+        <input id="ask" type="text" placeholder="e.g. How much would it cost us?" enterkeyhint="send">
+        <button class="send" type="submit" aria-label="Send"><span>Ask</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </form>
+    </div>
+    <p class="trust">If something isn’t in the pack, the guide says so rather than guessing.</p>
   </div>
 </section>
 
-<div class="wrap guide" id="guide">
-  <div class="guide-head">
-    <div>
-      <h2>The guide</h2>
-      <p>Pick a topic, then use the arrows to move through its answers.</p>
-    </div>
+<main class="wrap topics" id="topics">
+  <div class="topics-head">
+    <h2>Browse the guide</h2>
+    <p>Every topic in the pack, one short answer at a time.</p>
   </div>
-  <nav class="rail" aria-label="Topics"><ol id="rail"></ol></nav>
-  <div class="stage" id="stage">
-    <div class="picker">
-      <label for="picker">Topic and question</label>
-      <select id="picker"></select>
-    </div>
-    <article class="card" id="card" aria-live="polite">
-      <div class="card-meta"><span class="crumb" id="crumb"></span><span id="count"></span></div>
-      <div class="progress" id="progress"></div>
-      <h3 id="card-title"></h3>
-      <div class="card-body" id="card-body"></div>
-    </article>
-    <div class="nav">
-      <button type="button" id="prev"><span class="dir">← Previous</span><span class="lab" id="prev-lab"></span></button>
-      <button type="button" id="next" class="next"><span class="dir">Next →</span><span class="lab" id="next-lab"></span></button>
-    </div>
-    <div class="keys">Use <kbd>←</kbd> <kbd>→</kbd> to move between answers, <kbd>/</kbd> to search.</div>
-  </div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<div class="wrap end">
+  <span>Questions for the team: <span id="email">education@youmultiply.com</span><button class="copy" type="button" id="copy">Copy</button></span>
+  <span>Prices and features may change. Please confirm current offerings with YouMultiply.</span>
 </div>
 
-<!-- Content store: every answer from the pack, one card each -->
+<dialog class="reader" id="reader" aria-labelledby="r-title">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div><div class="crumb" id="r-crumb"></div><div class="count" id="r-count"></div></div>
+      <button class="x" type="button" id="r-close" aria-label="Close">×</button>
+    </div>
+    <div class="sheet-body" id="r-body">
+      <div class="progress" id="r-progress"></div>
+      <h3 id="r-title"></h3>
+      <div class="content" id="r-content"></div>
+      <div><button class="link" type="button" id="r-ask">Ask the guide about this</button></div>
+    </div>
+    <div class="sheet-nav">
+      <button type="button" id="r-prev"><span class="dir">← Previous</span><span class="lab" id="r-prev-lab"></span></button>
+      <button type="button" id="r-next" class="next"><span class="dir">Next →</span><span class="lab" id="r-next-lab"></span></button>
+    </div>
+  </div>
+</dialog>
+
 <div id="store" hidden>
 
-<section data-id="s0" data-n="★" data-label="About YouMultiply">
-  <article id="q0-1" data-n="" data-short="Who YouMultiply is" data-kw="company who youmultiply about mission ministries founded history clients">
+<section data-id="s0" data-n="★" data-label="About YouMultiply" data-blurb="The company behind ReachLMS and its team.">
+  <article id="q0-1" data-n="" data-short="Who YouMultiply is" data-kw="company who youmultiply about mission ministries founded history clients" data-say="YouMultiply is the technology company behind ReachLMS. It was founded in 2019 to help ministries and values-driven organizations, and today it serves Bible-based schools of hundreds to thousands of students, plus ministries like Teach Every Nation, Leadership Ministries Worldwide and RREACH.">
     <h3>Who is YouMultiply?</h3>
     <p>YouMultiply exists to multiply your organization’s impact. It is a technology company that helps ministries and values-driven organizations overcome complex digital challenges. Its core products make up the Reach ecosystem of educational technology, including ReachLMS, ReachSIS and products that integrate with and extend them.</p>
     <p>Since its founding in 2019, YouMultiply has provided educational and administrative technology to Bible-based institutions ranging from hundreds to thousands of students. It also serves global ministries such as Teach Every Nation (founded by Bruce Wilkinson), Leadership Ministries Worldwide (publishers of the Preacher’s Outline and Study Bible) and RREACH (the ministry of Ramesh Richard).</p>
   </article>
-  <article id="q0-2" data-n="" data-short="Leadership and team" data-kw="team leadership ceo louis barry founder staff people engineers qualifications">
+  <article id="q0-2" data-n="" data-short="Leadership and team" data-kw="team leadership ceo louis barry founder staff people engineers qualifications" data-say="The team is led by CEO Louis Barry, who has degrees in IT and Economics and in Theology. He leads a senior team that includes specialists with master’s degrees in engineering and software engineering.">
     <h3>Who leads the team?</h3>
     <p>CEO Louis Barry holds a degree in IT and Economics, complemented by a degree in Theology, reflecting the purpose behind YouMultiply: to serve Christian institutions through robust, future-ready technology.</p>
     <p>He leads a senior team whose qualifications and experience exceed his own, including specialists with master’s degrees in engineering and software engineering.</p>
   </article>
 </section>
 
-<section data-id="s1" data-n="01" data-label="About ReachLMS">
-  <article id="q1-1" data-n="1.1" data-short="What ReachLMS is" data-kw="what is reachlms canvas overview explain how it works relationship instructure open source">
+<section data-id="s1" data-n="01" data-label="About ReachLMS" data-blurb="What ReachLMS is, who runs it and who uses it.">
+  <article id="q1-1" data-n="1.1" data-short="What ReachLMS is" data-kw="what is reachlms canvas overview explain how it works relationship instructure open source" data-say="In short, ReachLMS is Canvas, the open-source version, hosted, extended and supported by YouMultiply. Your faculty and students get the same Canvas interface they know, plus extras like in-line annotation, a white-labeled mobile app, e-commerce, an interactive HTML5 content hub and Reach AI.">
     <h3>What is ReachLMS, and how does it relate to Canvas?</h3>
     <p>ReachLMS is the open-source Canvas LMS hosted, extended and supported by YouMultiply. Faculty and students get the same Canvas interface they already know. On top of the open-source core, YouMultiply adds:</p>
     <ul>
@@ -288,22 +286,22 @@ tbody th { font-weight: 600; }
     </ul>
     <p>Around the platform come hosting in your chosen region, migration, training and support. ReachLMS tracks upstream Canvas rather than forking it, so every Canvas improvement reaches you.</p>
   </article>
-  <article id="q1-1b" data-n="1.1" data-short="Why open source matters" data-kw="agplv3 license open source independence fallback freedom vendor dependence">
+  <article id="q1-1b" data-n="1.1" data-short="Why open source matters" data-kw="agplv3 license open source independence fallback freedom vendor dependence" data-say="It matters because Canvas is released under the AGPLv3 open-source license. That means you always keep the freedom to run the core Canvas software yourself, which gives you a fallback and less dependence on any one provider.">
     <h3>Why does the open-source license matter?</h3>
     <p>Canvas is released under the AGPLv3 open-source license, which is what makes ReachLMS possible.</p>
     <p>Because ReachLMS builds on Canvas, you keep the freedom to run the core Canvas software independently should you ever need to. That gives you a practical fallback and reduces your dependence on any single provider.</p>
   </article>
-  <article id="q1-2" data-n="1.2" data-short="The company behind it" data-kw="company who educative tech llc delaware legal entity team size reachsis everyword">
+  <article id="q1-2" data-n="1.2" data-short="The company behind it" data-kw="company who educative tech llc delaware legal entity team size reachsis everyword" data-say="ReachLMS is built and run by YouMultiply, which used to trade as Educative Tech. The legal entity is Educative Tech LLC, a Delaware-registered, founder-led company with a distributed team of 10 to 25 people, and it has served Christian higher education for seven years.">
     <h3>Who is the company behind ReachLMS?</h3>
     <p>YouMultiply, which previously traded as Educative Tech. The legal entity is still Educative Tech LLC, a Delaware-registered, founder-led company with a distributed team of ten to twenty-five people across engineering, support and implementation.</p>
     <p>It has served Christian higher education for seven years, with clients in North America, Africa, Asia and the Middle East. It also built ReachSIS, a student information system for seminaries and small colleges, and EVERYWORD for Leadership Ministries Worldwide. You may see both names on documents; they are the same company.</p>
   </article>
-  <article id="q1-3" data-n="1.3" data-short="Financial stability" data-kw="financially stable stability bankrupt business go under ceases trading risk vendor shareholders">
+  <article id="q1-3" data-n="1.3" data-short="Financial stability" data-kw="financially stable stability bankrupt business go under ceases trading risk vendor shareholders" data-say="Good question to ask. Even if YouMultiply stopped trading, the platform is open source and your data is yours, so you could move your instance to any Canvas host or run it yourself without losing data. The company has traded since 2019, takes a conservative approach to financing and is incorporated in multiple countries.">
     <h3>Is the company financially stable? What if it ceases trading?</h3>
     <p>The platform is open source and your data is yours. If YouMultiply went under, your institution could take its instance to any Canvas host, or run it itself, without losing data. A database dump is provided on request, which the main enterprise Canvas provider does not offer.</p>
     <p>YouMultiply has traded since 2019 as a private company with a small group of mission-aligned shareholders. It takes a conservative approach to financing, focuses on financial independence, and is incorporated in multiple countries.</p>
   </article>
-  <article id="q1-4" data-n="1.4" data-short="Who uses ReachLMS" data-kw="who uses customers clients references reference call case study institutions examples">
+  <article id="q1-4" data-n="1.4" data-short="Who uses ReachLMS" data-kw="who uses customers clients references reference call case study institutions examples" data-say="Quite a few institutions do. Louisiana Baptist University and Global Life University share one account, and the Bible Institute of South Africa moved over from hosted Canvas, halved its LMS bill and reported no disruption. You can ask for a reference call, usually arranged within a week.">
     <h3>Who else uses ReachLMS? Can we speak to them?</h3>
     <ul>
       <li><strong>Louisiana Baptist University</strong> (about 500 students) and sister school <strong>Global Life University</strong> (over 2,000 students) share one account. With no per-user fees, the second institution cost nothing extra.</li>
@@ -312,45 +310,45 @@ tbody th { font-weight: 600; }
     </ul>
     <p>Reference calls are arranged on request, normally within a week, with an institution of similar size and structure.</p>
   </article>
-  <article id="q1-5" data-n="1.5" data-short="Roadmap and influence" data-kw="roadmap feature request influence priorities future development">
+  <article id="q1-5" data-n="1.5" data-short="Roadmap and influence" data-kw="roadmap feature request influence priorities future development" data-say="Clients shape it. The roadmap follows what clients ask for during support and implementation, and you can pay an affordable development fee to prioritize something you need. The at-risk student analytics dashboard started exactly that way.">
     <h3>How is the roadmap decided, and can clients influence it?</h3>
     <p>The roadmap is shaped by what clients ask for during support and implementation. Clients can also ask for functionality to be prioritized for an affordable development fee. The analytics dashboard with at-risk student identification was first commissioned by one client, then rolled out to everyone.</p>
     <p>Current priorities: deeper automatic grade pass-back from interactive HTML5 assessments, and continued development of Reach AI.</p>
   </article>
-  <article id="q1-6" data-n="1.6" data-short="Relationship with Canvas community" data-kw="instructure relationship community upstream fork license change trademark">
+  <article id="q1-6" data-n="1.6" data-short="Relationship with Canvas community" data-kw="instructure relationship community upstream fork license change trademark" data-say="YouMultiply tracks the upstream Canvas project closely and tests every release against its own components. It respects Instructure’s trademarks and claims no affiliation, relying on the AGPLv3 license.">
     <h3>What is the relationship with the Canvas community?</h3>
     <p>YouMultiply tracks upstream Canvas closely, tests each release against its components and may contribute fixes back. It respects Instructure’s trademarks, claims no affiliation, and relies on the AGPLv3 license.</p>
     <p>If upstream ever changed its license or stopped publishing, code already released under AGPLv3 would stay available forever, and YouMultiply could maintain a fork alongside the community.</p>
   </article>
 </section>
 
-<section data-id="s2" data-n="02" data-label="Features vs Canvas">
-  <article id="q2-1" data-n="2.1" data-short="Standard Canvas features" data-kw="features included standard what do we get functionality canvas core">
+<section data-id="s2" data-n="02" data-label="Features vs Canvas" data-blurb="What stays the same as Canvas, what changes, what you gain.">
+  <article id="q2-1" data-n="2.1" data-short="Standard Canvas features" data-kw="features included standard what do we get functionality canvas core" data-say="You get everything in the open-source Canvas core: courses, modules, assignments, discussions, Classic Quizzes, the gradebook and SpeedGrader, rubrics, outcomes, Blueprint courses, the APIs, SIS imports and more. It’s the same interface, so faculty don’t need to retrain.">
     <h3>Which Canvas features are included as standard?</h3>
     <p>Everything in the open-source Canvas core: courses, modules, pages, assignments, discussions, Classic Quizzes and question banks, the gradebook and SpeedGrader, rubrics, learning outcomes and Mastery Paths, Blueprint courses, groups, calendar, inbox, conferences, collaborations, ePortfolios, notifications, LTI 1.1 and 1.3 tools, the full REST and GraphQL APIs, SIS imports, the Theme Editor, sub-accounts and roles.</p>
     <p>The interface is the same, so faculty do not need to retrain.</p>
   </article>
-  <article id="q2-2" data-n="2.2" data-short="Instructure-only services" data-kw="missing features gaps lose instructure hosted services mastery connect impact badges credentials portfolium">
+  <article id="q2-2" data-n="2.2" data-short="Instructure-only services" data-kw="missing features gaps lose instructure hosted services mastery connect impact badges credentials portfolium" data-say="Most Instructure-only services are covered, including annotation, quizzes, content sharing, e-commerce, video, analytics and AI. A few have no direct equivalent: Mastery Connect, Impact, Canvas Credentials and Portfolium. The pack notes that none of the migrating clients has needed a replacement.">
     <h3>What about Instructure-only hosted services?</h3>
     <p>Annotation, quizzes, content sharing, e-commerce, video, analytics and AI are all covered, most with capabilities beyond the original.</p>
     <p>A few products have no direct equivalent: Mastery Connect (K-12 benchmark assessment), Impact (adoption messaging), Canvas Credentials (badges) and Portfolium. Badges are available through Open Badges tools via LTI, and Canvas’s built-in ePortfolios remain. None of the migrating clients has needed a replacement.</p>
   </article>
-  <article id="q2-3" data-n="2.3" data-short="Annotating submissions" data-kw="annotate annotation pdf speedgrader docviewer feedback highlight comment draw marking">
+  <article id="q2-3" data-n="2.3" data-short="Annotating submissions" data-kw="annotate annotation pdf speedgrader docviewer feedback highlight comment draw marking" data-say="Yes. Instructors can highlight, comment and draw directly on PDF submissions in SpeedGrader. Each annotation links to a sidebar comment, so students are notified and actually see the feedback.">
     <h3>Can instructors annotate directly on student submissions?</h3>
     <p>Yes. The SpeedGrader annotation tool lets instructors highlight, comment and draw directly on PDF submissions. Every annotation is linked to a comment in the assignment sidebar, so the student is notified; in the hosted DocViewer, annotations were harder for students to find. The annotated document is saved automatically for the student to view and download.</p>
     <p>For in-line annotation, set the assignment to accept PDF. Every word processor exports to PDF in one step.</p>
   </article>
-  <article id="q2-4" data-n="2.4" data-short="Quizzes and New Quizzes" data-kw="quiz quizzes new quizzes classic survey question types qti assessment test exam">
+  <article id="q2-4" data-n="2.4" data-short="Quizzes and New Quizzes" data-kw="quiz quizzes new quizzes classic survey question types qti assessment test exam" data-say="You keep your quizzes. Both New and Classic Quizzes content is migrated, and ReachLMS runs Classic Quizzes. The three New Quizzes question types Classic doesn’t have (categorization, ordering and hot spot) are rebuilt as interactive HTML5 items.">
     <h3>What happens to quizzes? Do we keep New Quizzes?</h3>
     <p>You keep your quizzes. Both New and Classic Quizzes content is migrated. ReachLMS uses Classic Quizzes, which keeps a survey tool and the per-attempt quiz log that academic-integrity processes may rely on. Interactive HTML5 content and LTI assessment tools add more question types.</p>
     <p>New Quizzes has three types Classic lacks: categorization, ordering and hot spot. These are rebuilt as interactive HTML5 items during migration; everything else converts automatically via QTI. Deeper automatic grade pass-back is on the roadmap.</p>
   </article>
-  <article id="q2-5" data-n="2.5" data-short="Replacing Commons" data-kw="commons share sharing content reuse blueprint templates imscc library">
+  <article id="q2-5" data-n="2.5" data-short="Replacing Commons" data-kw="commons share sharing content reuse blueprint templates imscc library" data-say="Content sharing works through Blueprint courses, course copy, templates and IMSCC import and export. Before you leave your current provider, YouMultiply helps export your Commons resources so nothing is lost.">
     <h3>What replaces Commons for sharing content?</h3>
     <p>Blueprint courses, course copy and templates, and IMSCC export and import, all standard Canvas. Before you leave your current provider, YouMultiply helps export your Commons resources so nothing is lost.</p>
     <p>A shared content library across ReachLMS institutions is on the roadmap.</p>
   </article>
-  <article id="q2-6" data-n="2.6" data-short="E-commerce and certificates" data-kw="catalog ecommerce e-commerce sell courses payments stripe paypal paystack certificates enrollment public listings coupons price cost">
+  <article id="q2-6" data-n="2.6" data-short="E-commerce and certificates" data-kw="catalog ecommerce e-commerce sell courses payments stripe paypal paystack certificates enrollment public listings coupons price cost" data-say="That’s the e-commerce add-on: public course listings, self-registration, online payments and certificates. It costs $2,500 to set up and $6,250 a year, with no per-user fee. Connecting Stripe is $650, and other gateways are about $1,300.">
     <h3>What replaces Catalog for listings, payments and certificates?</h3>
     <p>The e-commerce add-on gives you branded public course listings, self-registration, online payment and certificates, with single courses, bundles, subscriptions, coupon codes and an option to sponsor a student.</p>
     <ul>
@@ -360,17 +358,17 @@ tbody th { font-weight: 600; }
       <li>Certificates are set up per course, with ten included; each carries the student’s name and a QR code linked to their results.</li>
     </ul>
   </article>
-  <article id="q2-7" data-n="2.7" data-short="Video and Studio" data-kw="video studio youtube vimeo panopto kaltura yuja interactive video media price cost">
+  <article id="q2-7" data-n="2.7" data-short="Video and Studio" data-kw="video studio youtube vimeo panopto kaltura yuja interactive video media price cost" data-say="Most institutions embed YouTube or Vimeo for free, and Panopto, Kaltura or YuJa connect through LTI. Interactive video costs nothing extra. If you want a full video platform, it starts at $4,400 to set up and $2,400 a year.">
     <h3>What about video (Studio)?</h3>
     <p>Most institutions are advised to embed video from YouTube or Vimeo at no cost. Panopto, Kaltura or YuJa connect through LTI if you already license one. Interactive video with embedded questions works on pages and assignments at no extra cost, and the team can build it during course setup.</p>
     <p>A full video platform with commenting, viewing analytics and sharing is from $4,400 setup and from $2,400 per year, priced on server load and storage, not per user.</p>
   </article>
-  <article id="q2-8" data-n="2.8" data-short="Analytics and reporting" data-kw="analytics reporting reports data power bi tableau dashboard insights historical">
+  <article id="q2-8" data-n="2.8" data-short="Analytics and reporting" data-kw="analytics reporting reports data power bi tableau dashboard insights historical" data-say="Instructor course analytics, student-level analytics and the standard Canvas admin reports are all included. You can also connect the API and scheduled database exports to Power BI or Tableau, and Reach AI answers data questions in plain English.">
     <h3>What analytics and reporting do we get?</h3>
     <p>Course analytics for instructors, student-level analytics and standard Canvas admin reports are included. The full API and scheduled database exports connect to Power BI, Tableau or other tools, and Reach AI answers data questions in plain English.</p>
     <p>Historical analytics from your previous provider can be exported for your records; new analytics accumulate from go-live. Grades, submissions and activity records are migrated, so the underlying history is preserved.</p>
   </article>
-  <article id="q2-9" data-n="2.9" data-short="What you gain over Canvas" data-kw="advantages benefits why better gain differentiators compare enterprise canvas instructure">
+  <article id="q2-9" data-n="2.9" data-short="What you gain over Canvas" data-kw="advantages benefits why better gain differentiators compare enterprise canvas instructure" data-say="Quite a lot. Highlights include flat pricing that doesn’t rise with enrollment, your own isolated instance in the region you choose, annotations students actually see, and WhatsApp and email support for faculty and students with no per-user fees.">
     <h3>What does ReachLMS offer that enterprise Canvas does not?</h3>
     <ul>
       <li>A white-labeled mobile app with offline study (add-on).</li>
@@ -383,7 +381,7 @@ tbody th { font-weight: 600; }
       <li>An optional SIS (ReachSIS) and a self-host option.</li>
     </ul>
   </article>
-  <article id="q2-10" data-n="2.10" data-short="For Christian institutions" data-kw="christian theological seminary bible logos everyword library commentaries faith ministry">
+  <article id="q2-10" data-n="2.10" data-short="For Christian institutions" data-kw="christian theological seminary bible logos everyword library commentaries faith ministry" data-say="Two resources you won’t find on Instructure-hosted Canvas, both free on request: the Logos Library Access Manager, with 2,700+ Logos resources, and EVERYWORD Premium, which every user gets free for six months.">
     <h3>What does ReachLMS offer Christian institutions?</h3>
     <p>Two resources not available on Instructure-hosted Canvas, both free on request and switched off for institutions that do not want them:</p>
     <ul>
@@ -391,12 +389,12 @@ tbody th { font-weight: 600; }
       <li><strong>EVERYWORD Premium.</strong> Scripture with outlines and commentary from all 44 volumes of the Preacher’s Outline &amp; Sermon Bible®, on any device, including offline. Every user gets six months free, a $48 value.</li>
     </ul>
   </article>
-  <article id="q2-11" data-n="2.11" data-short="Roadmap items" data-kw="roadmap future upcoming planned iso 27001 hecvat mcp">
+  <article id="q2-11" data-n="2.11" data-short="Roadmap items" data-kw="roadmap future upcoming planned iso 27001 hecvat mcp" data-say="Coming up: automatic grade pass-back from interactive HTML5 assessments, more Reach AI and MCP server features, ISO 27001 certification and completion of the HECVAT.">
     <h3>What is on the roadmap?</h3>
     <p>Automatic grade pass-back from interactive HTML5 assessments; expansion of Reach AI and the AI MCP server; ISO 27001 certification; and completion of the HECVAT.</p>
     <p>Clients can request or fund the development of specific features.</p>
   </article>
-  <article id="q2-12a" data-n="2.12" data-short="Comparison: teaching tools" data-kw="feature parity matrix comparison compare table enterprise open source teaching">
+  <article id="q2-12a" data-n="2.12" data-short="Comparison: teaching tools" data-kw="feature parity matrix comparison compare table enterprise open source teaching" data-say="Here’s how teaching and content features compare across enterprise Canvas, open-source Canvas and ReachLMS.">
     <h3>Feature comparison: teaching and content</h3>
     <div class="tbl wide"><table>
       <thead><tr><th>Capability</th><th>Enterprise Canvas</th><th>Open-source Canvas</th><th>ReachLMS</th><th>Cost</th></tr></thead>
@@ -412,7 +410,7 @@ tbody th { font-weight: 600; }
       </tbody>
     </table></div>
   </article>
-  <article id="q2-12b" data-n="2.12" data-short="Comparison: apps and products" data-kw="feature parity matrix comparison mobile app ai badges impact portfolium conferences accessibility">
+  <article id="q2-12b" data-n="2.12" data-short="Comparison: apps and products" data-kw="feature parity matrix comparison mobile app ai badges impact portfolium conferences accessibility" data-say="Here’s how apps, AI and other products compare across enterprise Canvas, open-source Canvas and ReachLMS.">
     <h3>Feature comparison: apps and products</h3>
     <div class="tbl wide"><table>
       <thead><tr><th>Capability</th><th>Enterprise Canvas</th><th>Open-source Canvas</th><th>ReachLMS</th><th>Cost</th></tr></thead>
@@ -430,7 +428,7 @@ tbody th { font-weight: 600; }
       </tbody>
     </table></div>
   </article>
-  <article id="q2-12c" data-n="2.12" data-short="Comparison: hosting and support" data-kw="feature parity matrix comparison hosting tenancy residency support sis self-host test environment">
+  <article id="q2-12c" data-n="2.12" data-short="Comparison: hosting and support" data-kw="feature parity matrix comparison hosting tenancy residency support sis self-host test environment" data-say="Here’s how hosting, support and the extras compare across enterprise Canvas, open-source Canvas and ReachLMS.">
     <h3>Feature comparison: hosting, support and extras</h3>
     <div class="tbl wide"><table>
       <thead><tr><th>Capability</th><th>Enterprise Canvas</th><th>Open-source Canvas</th><th>ReachLMS</th><th>Cost</th></tr></thead>
@@ -448,66 +446,66 @@ tbody th { font-weight: 600; }
   </article>
 </section>
 
-<section data-id="s3" data-n="03" data-label="Mobile app &amp; branding">
-  <article id="q3-1" data-n="3.1" data-short="The mobile apps" data-kw="mobile app apps phone ios android iphone offline students download push notifications">
+<section data-id="s3" data-n="03" data-label="Mobile app &amp; branding" data-blurb="The standard and white-labeled apps, and web branding.">
+  <article id="q3-1" data-n="3.1" data-short="The mobile apps" data-kw="mobile app apps phone ios android iphone offline students download push notifications" data-say="Yes. There’s the standard ReachLMS app in the Apple and Google stores, or a white-labeled app with your own name and branding. Both support push notifications and offline study, and switching takes a student under a minute.">
     <h3>Is there a mobile app? What changes for students?</h3>
     <p>Yes. Use the standard ReachLMS app on the Apple and Google stores, or a white-labeled app with your institution’s name, icon and branding. Both support core Canvas functionality, push notifications and an offline mode that downloads course content for study without a connection.</p>
     <p>Instructure’s Canvas Student and Teacher apps do not work with ReachLMS. Students use the ReachLMS app, the white-labeled app or the responsive mobile web. Templates are supplied at cutover, and switching takes a student under a minute.</p>
   </article>
-  <article id="q3-2" data-n="3.2" data-short="The white-labeled app" data-kw="white label white-labeled app branded own app ten hub developer account app store google play">
+  <article id="q3-2" data-n="3.2" data-short="The white-labeled app" data-kw="white label white-labeled app branded own app ten hub developer account app store google play" data-say="It’s an app built from the ground up, not a re-skin, carrying your institution’s name, icon and branding in the app and its store listings. It’s published under YouMultiply’s developer accounts, so you don’t need your own Apple or Google enrollment.">
     <h3>What exactly is the white-labeled app?</h3>
     <p>A newly designed app built from the ground up, not a re-skin. Students see courses, modules, assignments and due dates, submit work, view grades and feedback, join discussions and use the inbox and calendar. Instructors can grade, post announcements and join discussions. Observer and parent access follows web permissions.</p>
     <p>It is published under YouMultiply’s developer accounts, so you need no Apple or Google enrollment; your own account is available for a fee. Teach Every Nation’s app, TEN Hub, is an example.</p>
   </article>
-  <article id="q3-3" data-n="3.3" data-short="App pricing and timeline" data-kw="app price cost how much white label fee annual timeline weeks store">
+  <article id="q3-3" data-n="3.3" data-short="App pricing and timeline" data-kw="app price cost how much white label fee annual timeline weeks store" data-say="The white-labeled app is $3,500 to set up and $2,400 a year, with no per-user or per-download charge. It usually takes four to six weeks to reach the app stores, mostly because of Apple’s and Google’s review time.">
     <h3>How is the app priced, and how long does it take?</h3>
     <p>$3,500 setup and $2,400 per year, with no per-user or per-download charge. The annual fee covers store listings, operating-system updates and feature updates.</p>
     <p>Order to store availability is typically four to six weeks, mostly Apple’s and Google’s review time. You supply your logo, brand colors, a short store description and a privacy policy link.</p>
   </article>
-  <article id="q3-4" data-n="3.4" data-short="Branding the web platform" data-kw="brand branding logo colours colors theme domain custom css login page sub-account">
+  <article id="q3-4" data-n="3.4" data-short="Branding the web platform" data-kw="brand branding logo colours colors theme domain custom css login page sub-account" data-say="Quite far. Your logo, colors, login page and own domain are all set up for you during implementation, with SSL handled. Custom CSS and JavaScript work too, and each campus or partner school can have its own theme.">
     <h3>How far can we brand the web platform?</h3>
     <p>Branding is done for you during implementation: logo, colors, login page and your own domain (for example learn.yourinstitution.edu), with SSL provisioned and renewed for you. Administrators get a Theme Editor walkthrough, and custom CSS and JavaScript are supported. Notification emails come from your own domain once DNS records are added.</p>
     <p>Faculties, campuses or partner schools can each have their own theme at sub-account level. Sharing an instance costs nothing extra.</p>
   </article>
 </section>
 
-<section data-id="s4" data-n="04" data-label="Security">
-  <article id="q4-1" data-n="4.1" data-short="Isolated instances" data-kw="security secure safe breach architecture isolated dedicated instance multi-tenant shared risk">
+<section data-id="s4" data-n="04" data-label="Security" data-blurb="Isolation, patching, access control and incidents.">
+  <article id="q4-1" data-n="4.1" data-short="Isolated instances" data-kw="security secure safe breach architecture isolated dedicated instance multi-tenant shared risk" data-say="Every institution gets its own dedicated, isolated instance with its own database and servers. A breach of one instance can’t expose another institution’s data, unlike a shared multi-tenant platform where one breach can hit every customer.">
     <h3>How does the architecture reduce the risk of a large breach?</h3>
     <p>Every institution runs on its own dedicated, isolated instance with its own database and application servers. A compromise of one instance cannot expose another institution’s data. On a shared multi-tenant platform, one breach can affect every customer at once, as the sector saw in 2026.</p>
     <p>Patching is automated across instances, and critical upstream patches reach all of them within 72 hours. Only the shared tier for very small institutions shares an instance; anyone with more than a few hundred users gets a dedicated one.</p>
   </article>
-  <article id="q4-2" data-n="4.2" data-short="Hosting and encryption" data-kw="where hosted data digitalocean encryption encrypted tls ddos firewall region datacenter soc 2">
+  <article id="q4-2" data-n="4.2" data-short="Hosting and encryption" data-kw="where hosted data digitalocean encryption encrypted tls ddos firewall region datacenter soc 2" data-say="Your data is hosted on DigitalOcean, whose datacenters hold SOC 2 Type II and ISO 27001 certifications, in the region you choose out of 13. Everything is encrypted in transit and at rest.">
     <h3>Where and how is our data hosted?</h3>
     <p>On DigitalOcean, whose datacenters hold SOC 2 Type II and ISO 27001 certifications. You choose from 13 regions across North America, Europe, Asia and Australia. There is no region in Africa or the Middle East; Frankfurt or London is recommended, with a global CDN keeping things fast.</p>
     <p>Traffic is encrypted with TLS 1.2 or later and data is encrypted at rest. The CDN layer adds DDoS protection, firewall rules and rate limiting, and server access is limited to named engineers.</p>
   </article>
-  <article id="q4-3" data-n="4.3" data-short="Patching vulnerabilities" data-kw="vulnerabilities patch patching updates scanning penetration test report security issue 72 hours">
+  <article id="q4-3" data-n="4.3" data-short="Patching vulnerabilities" data-kw="vulnerabilities patch patching updates scanning penetration test report security issue 72 hours" data-say="Critical security patches from upstream Canvas reach every client instance within 72 hours. Vulnerability scanning is carried out regularly, and an independent penetration test is planned for 2027.">
     <h3>How do you find and fix vulnerabilities?</h3>
     <p>Critical upstream security patches are deployed to all instances within 72 hours of release; routine updates follow the normal release cycle. All staff access to infrastructure requires MFA.</p>
     <p>Regular vulnerability scanning and hardening are carried out, and independent penetration testing is planned for 2027. Researchers can report issues to security@youmultiply.com, with acknowledgement within two business days.</p>
   </article>
-  <article id="q4-4" data-n="4.4" data-short="Access control and SSO" data-kw="access control login sso mfa two factor permissions roles audit act as user staff access">
+  <article id="q4-4" data-n="4.4" data-short="Access control and SSO" data-kw="access control login sso mfa two factor permissions roles audit act as user staff access" data-say="Through single sign-on with SAML, OpenID Connect, OAuth, CAS or LDAP, plus optional MFA for admins or everyone. Your administrators control the roles. On YouMultiply’s side, staff use MFA and least-privilege access, and any “act as user” session is logged.">
     <h3>How is access to the platform and our data controlled?</h3>
     <p>Single sign-on through SAML 2.0, OpenID Connect and OAuth, CAS and LDAP covers Microsoft Entra ID, Google Workspace, Okta and campus providers. MFA can be required for administrators or all users, and your administrators control granular roles.</p>
     <p>YouMultiply staff use least-privilege access with MFA and are vetted before production access. Any “act as user” session is recorded in the audit log, and authentication, grade-change and course logs are kept for twelve months.</p>
   </article>
-  <article id="q4-5" data-n="4.5" data-short="Security incidents" data-kw="incident breach notification ransom ransomware hacked insurance cyber response plan 24 hours">
+  <article id="q4-5" data-n="4.5" data-short="Security incidents" data-kw="incident breach notification ransom ransomware hacked insurance cyber response plan 24 hours" data-say="You’d be notified within 24 hours of the incident being confirmed, and that commitment is in the contract. You’d also get a named contact and a written report. Ransoms are never paid, and the pack states there have been no data breaches to date.">
     <h3>What happens if there is a security incident?</h3>
     <p>You are notified within 24 hours of an incident being confirmed (a contractual commitment), with a named contact and a written post-incident report. The response plan covers monitoring, containment, communication, recovery from separately held backups, and review. No ransoms are paid.</p>
     <p>There is no cyber liability insurance currently. Protection comes from instance isolation, backup design, 24-hour notification and a data-protection indemnity. There have been no data breaches to date.</p>
   </article>
-  <article id="q4-6" data-n="4.6" data-short="Certifications" data-kw="certifications certified iso 27001 soc 2 hecvat penetration test audit compliance">
+  <article id="q4-6" data-n="4.6" data-short="Certifications" data-kw="certifications certified iso 27001 soc 2 hecvat penetration test audit compliance" data-say="The hosting provider, DigitalOcean, holds SOC 2 Type II and ISO 27001. YouMultiply itself is working toward ISO 27001 by the end of 2027, has a penetration test scheduled for 2027, and has a HECVAT in the pipeline.">
     <h3>What certifications and assessments do you hold?</h3>
     <p>The hosting provider, DigitalOcean, holds SOC 2 Type II and ISO 27001.</p>
     <p>A HECVAT is on the priority list and will be fast-tracked if it blocks your procurement. An independent penetration test is scheduled for 2027 with shareable results, and ISO 27001 certification is targeted for the end of 2027.</p>
   </article>
-  <article id="q4-7" data-n="4.7" data-short="Your responsibilities" data-kw="shared responsibility client responsibilities our role institution obligations checklist">
+  <article id="q4-7" data-n="4.7" data-short="Your responsibilities" data-kw="shared responsibility client responsibilities our role institution obligations checklist" data-say="Security is shared. YouMultiply looks after the platform, patching, backups and monitoring. Your institution looks after its identity provider, admin accounts, which LTI tools you connect, and user awareness.">
     <h3>What are our responsibilities as the client?</h3>
     <p>Security is shared. YouMultiply covers the platform, infrastructure, patching, backups, monitoring and its own staff’s access.</p>
     <p>Your institution covers the identity provider and its password and MFA policies, administrator accounts and prompt removal of access, vetting LTI tools, how users share data in courses, and user awareness. Every implementation includes an administrator security checklist, and access-review reports are available on request.</p>
   </article>
-  <article id="q4-8" data-n="4.8" data-short="Vendor security checklist" data-kw="checklist questions ask vendor security due diligence compare">
+  <article id="q4-8" data-n="4.8" data-short="Vendor security checklist" data-kw="checklist questions ask vendor security due diligence compare" data-say="Here’s the pack’s checklist of questions to ask any LMS vendor, with ReachLMS’s answer to each.">
     <h3>Questions to ask any LMS vendor, with ReachLMS’s answers</h3>
     <div class="check">
       <div><span>#</span><span>Question</span><span>ReachLMS</span></div>
@@ -524,8 +522,8 @@ tbody th { font-weight: 600; }
   </article>
 </section>
 
-<section data-id="s5" data-n="05" data-label="Privacy &amp; compliance">
-  <article id="q5-1" data-n="5.1" data-short="Privacy regulations" data-kw="privacy law regulations gdpr ferpa popia uk compliance compliant legal">
+<section data-id="s5" data-n="05" data-label="Privacy &amp; compliance" data-blurb="Privacy law, data location, ownership and retention.">
+  <article id="q5-1" data-n="5.1" data-short="Privacy regulations" data-kw="privacy law regulations gdpr ferpa popia uk compliance compliant legal" data-say="It depends where you are. US institutions get FERPA coverage, with YouMultiply acting as a school official. European and UK institutions get a GDPR and UK GDPR data processing agreement. South African institutions are covered under POPIA.">
     <h3>Which privacy regulations do you comply with?</h3>
     <ul>
       <li><strong>US:</strong> acts as a school official under your direct control for FERPA.</li>
@@ -534,22 +532,22 @@ tbody th { font-weight: 600; }
     </ul>
     <p>The Information Officer and Data Protection contact is privacy@youmultiply.com.</p>
   </article>
-  <article id="q5-2" data-n="5.2" data-short="Choosing data location" data-kw="where data stored location region country residency jurisdiction choose">
+  <article id="q5-2" data-n="5.2" data-short="Choosing data location" data-kw="where data stored location region country residency jurisdiction choose" data-say="You choose. Options include the US, Canada, the UK, the Netherlands, Germany, India, Singapore and Australia, all at the same price, and your backups and logs stay in that same region.">
     <h3>Where is our data stored, and can we choose?</h3>
     <p>You choose: United States, Canada, United Kingdom, Netherlands, Germany, India, Singapore or Australia, at the same price in every region. Backups and logs stay in the same region as your instance.</p>
     <p>The DPA covers the cases where the distributed team needs to work with your data outside that jurisdiction to provide the service.</p>
   </article>
-  <article id="q5-3" data-n="5.3" data-short="Data ownership" data-kw="own ownership who owns our data use training ai advertising">
+  <article id="q5-3" data-n="5.3" data-short="Data ownership" data-kw="own ownership who owns our data use training ai advertising" data-say="You do. All your data and content belong to you. It’s used only to run your instance, and never to train AI models, for advertising or for benchmarking.">
     <h3>Who owns the data, and what do you do with it?</h3>
     <p>You own all your data and content. It is processed only to provide the service, and never used to train AI models, for advertising, for benchmarking or for anything else.</p>
     <p>With Reach AI’s bring-your-own-key, you decide which AI provider handles your data and on what terms.</p>
   </article>
-  <article id="q5-4" data-n="5.4" data-short="Retention and deletion" data-kw="retention deletion delete data retained backups days leave subject requests legal hold">
+  <article id="q5-4" data-n="5.4" data-short="Retention and deletion" data-kw="retention deletion delete data retained backups days leave subject requests legal hold" data-say="Daily backups are kept for 7 days on Base and 14 days on higher tiers. If you leave, you get a free full export, your instance stays up for 60 days so you can check it, and then everything is deleted and confirmed in writing.">
     <h3>What is your data retention and deletion policy?</h3>
     <p>Daily backups are kept 7 days on Base and 14 days above; 30-day retention is $75 per month.</p>
     <p>If you leave: free full export, your instance kept 60 days to verify it, then deletion, with the last backups expiring seven days later and written confirmation. Data subject requests are handled within 30 days, and legal holds are supported.</p>
   </article>
-  <article id="q5-5" data-n="5.5" data-short="Sub-processors" data-kw="sub-processors subprocessors third parties vendors digitalocean resend whatsapp freshworks">
+  <article id="q5-5" data-n="5.5" data-short="Sub-processors" data-kw="sub-processors subprocessors third parties vendors digitalocean resend whatsapp freshworks" data-say="The sub-processors are DigitalOcean for hosting, Resend for email, WhatsApp Business for support chats, Freshworks for support tickets, and Apple and Google for the app stores. An AI provider is added only if you use YouMultiply’s instead of your own key.">
     <h3>Which sub-processors do you use?</h3>
     <ul>
       <li><strong>DigitalOcean:</strong> hosting, storage, backups and CDN in your region.</li>
@@ -561,34 +559,34 @@ tbody th { font-weight: 600; }
     </ul>
     <p>Clients get at least 30 days’ notice before any change.</p>
   </article>
-  <article id="q5-6" data-n="5.6" data-short="Signing your DPA" data-kw="dpa data processing agreement sign paperwork">
+  <article id="q5-6" data-n="5.6" data-short="Signing your DPA" data-kw="dpa data processing agreement sign paperwork" data-say="Yes. The standard DPA is available on request, and YouMultiply will review your institution’s own papers where required.">
     <h3>Will you sign our Data Processing Agreement?</h3>
     <p>Yes. The standard DPA is available on request, and institutional papers are reviewed where required.</p>
   </article>
-  <article id="q5-7" data-n="5.7" data-short="Accessibility" data-kw="accessible accessibility wcag vpat disability screen reader conformance">
+  <article id="q5-7" data-n="5.7" data-short="Accessibility" data-kw="accessible accessibility wcag vpat disability screen reader conformance" data-say="Yes. ReachLMS runs the same code as Canvas, which is built to WCAG 2.1 AA, so that conformance carries over. An Accessibility Conformance Report can be drawn up on request.">
     <h3>Is ReachLMS accessible?</h3>
     <p>ReachLMS runs the same code as Canvas, which Instructure develops to WCAG 2.1 AA and documents in a VPAT, so that conformance is inherited.</p>
     <p>Added features follow the same principles, and an Accessibility Conformance Report can be drawn up on request. Canvas’s accessibility checker helps authors keep content compliant.</p>
   </article>
-  <article id="q5-8" data-n="5.8" data-short="Questionnaires and pledges" data-kw="questionnaire hecvat vendor assessment privacy pledge student data">
+  <article id="q5-8" data-n="5.8" data-short="Questionnaires and pledges" data-kw="questionnaire hecvat vendor assessment privacy pledge student data" data-say="Bespoke security and privacy questionnaires are answered within ten business days, and a HECVAT can be expedited on request. YouMultiply will also sign the student data privacy commitments your region requires.">
     <h3>How do you handle privacy pledges and vendor questionnaires?</h3>
     <p>A HECVAT is in the pipeline and expedited on request. Bespoke security and privacy questionnaires are answered within ten business days.</p>
     <p>YouMultiply will sign the student data privacy commitments your state, province or country requires.</p>
   </article>
 </section>
 
-<section data-id="s6" data-n="06" data-label="Hosting &amp; reliability">
-  <article id="q6-1" data-n="6.1" data-short="Uptime" data-kw="uptime reliable reliability downtime outage sla status page maintenance">
+<section data-id="s6" data-n="06" data-label="Hosting &amp; reliability" data-blurb="Uptime, tiers, backups, storage and monitoring.">
+  <article id="q6-1" data-n="6.1" data-short="Uptime" data-kw="uptime reliable reliability downtime outage sla status page maintenance" data-say="The commitment is 99.9% monthly uptime, backed by service credits. Over the past twelve months, delivered uptime has been well over 99.9%. Planned maintenance happens overnight where possible, with at least seven days’ notice.">
     <h3>What uptime do you guarantee, and what have you delivered?</h3>
     <p>99.9% monthly uptime, backed by service credits; delivered uptime has been well over 99.9% for the past twelve months. Status is at status.reachlms.com for the shared instance, and each dedicated instance has its own status page.</p>
     <p>Planned maintenance runs, where possible, from 02:00 to 04:00 local time, with at least seven days’ notice and never during assessment periods you have flagged.</p>
   </article>
-  <article id="q6-2" data-n="6.2" data-short="Dedicated vs shared" data-kw="shared dedicated instance other institutions tenancy sister">
+  <article id="q6-2" data-n="6.2" data-short="Dedicated vs shared" data-kw="shared dedicated instance other institutions tenancy sister" data-say="Not unless you choose to share it. Standard institutions each get a dedicated instance with its own database and servers. Sister institutions can share, and very small schools can use an affordable shared tier.">
     <h3>Is our instance shared with other institutions?</h3>
     <p>No, unless you choose to share it. Each dedicated instance has its own database and servers, so no other institution’s load affects you and upgrades fit around your calendar.</p>
     <p>Sister institutions can share one instance, and very small institutions can use an affordable shared tier.</p>
   </article>
-  <article id="q6-3" data-n="6.3" data-short="Tiers and capacity" data-kw="tiers scale growth capacity users size base plus large extra large how many students price">
+  <article id="q6-3" data-n="6.3" data-short="Tiers and capacity" data-kw="tiers scale growth capacity users size base plus large extra large how many students price" data-say="You pick a tier, and the price never depends on user numbers. Base is $7,800 a year and suits up to about 750 active users in typical use, going up to Extra Large at $29,100 for about 6,000.">
     <h3>How does the platform scale for growth?</h3>
     <p>Price depends on the tier, never on user numbers. Load comes from how many people use the platform at once, so capacity depends on usage pattern.</p>
     <div class="tbl mid"><table>
@@ -603,7 +601,7 @@ tbody th { font-weight: 600; }
     </table></div>
     <p class="note">Figures are active users (up to): this term’s enrollment plus staff, or for light use, members active in a year.</p>
   </article>
-  <article id="q6-3b" data-n="6.3" data-short="What each tier includes" data-kw="tier includes inclusions storage transfer backups support hours test environment health review base plus">
+  <article id="q6-3b" data-n="6.3" data-short="What each tier includes" data-kw="tier includes inclusions storage transfer backups support hours test environment health review base plus" data-say="Base comes with 250 GB of storage, 7-day backups and 3 support hours a month. Base Plus and above double the storage to 500 GB and add 14-day backups, 5 support hours, test environments and an annual health review.">
     <h3>What does each tier include?</h3>
     <div class="tbl mid"><table>
       <thead><tr><th></th><th>Base</th><th>Base Plus and above</th></tr></thead>
@@ -618,44 +616,44 @@ tbody th { font-weight: 600; }
       </tbody>
     </table></div>
   </article>
-  <article id="q6-3c" data-n="6.3" data-short="Sizing your instance" data-kw="sizing which tier recommend choose exams staggered upgrade tier load">
+  <article id="q6-3c" data-n="6.3" data-short="Sizing your instance" data-kw="sizing which tier recommend choose exams staggered upgrade tier load" data-say="Most institutions are on Base, and Base Plus is recommended above about 500 students. Before you sign, your instance is sized from five questions about how your users actually use the platform.">
     <h3>Which tier is right for us?</h3>
     <p>Most institutions are on Base; Base Plus is recommended above about 500 students. Sizing uses five questions: active users this term, peak simultaneous quiz-takers, number of live courses, whether video is embedded or uploaded, and the size and frequency of SIS syncs.</p>
     <p>For live online exams, stagger start times for cohorts above about 25 (Base), 50 (Base Plus), 100 (Large) or 200 (Extra Large). Moving up a tier under sustained load is the only time your price changes (<a class="xref" href="#q12-7">see 12.7</a>).</p>
   </article>
-  <article id="q6-4" data-n="6.4" data-short="Backups and recovery" data-kw="backup backups restore recovery disaster business continuity rto rpo snapshots">
+  <article id="q6-4" data-n="6.4" data-short="Backups and recovery" data-kw="backup backups restore recovery disaster business continuity rto rpo snapshots" data-say="Encrypted snapshots are taken daily and stored separately from production in the same region. The recovery time objective is four hours, and the recovery point objective is 24 hours.">
     <h3>How are backups and disaster recovery handled?</h3>
     <p>Daily encrypted snapshots, stored separately from production in the same region, kept 7 days on Base and 14 days on Base Plus and above. 30-day retention is $75 per month on any tier.</p>
     <p>Recovery time objective: four hours. Recovery point objective: 24 hours.</p>
   </article>
-  <article id="q6-5" data-n="6.5" data-short="Test environments" data-kw="test staging sandbox beta environment preview releases">
+  <article id="q6-5" data-n="6.5" data-short="Test environments" data-kw="test staging sandbox beta environment preview releases" data-say="Yes. Base Plus and above include two two-week test environments a year. A permanent test instance that gets every release first is $1,200 a year on any tier.">
     <h3>Do we get test, staging or beta environments?</h3>
     <p>Base Plus and above include two two-week test environments a year, refreshed from production and timed to a release or your own project.</p>
     <p>A permanent test instance that receives each release before production is $1,200 per year on any tier. Smaller institutions often find a sandbox course on the live instance enough.</p>
   </article>
-  <article id="q6-6" data-n="6.6" data-short="Storage and transfer" data-kw="storage space gb files bandwidth data transfer extra cost overage">
+  <article id="q6-6" data-n="6.6" data-short="Storage and transfer" data-kw="storage space gb files bandwidth data transfer extra cost overage" data-say="Base includes 250 GB and the higher tiers 500 GB, never charged per user. With video hosted on a video platform, 250 GB lasts a Base-sized institution two to three years. Extra transfer beyond your allowance is $50 per TB.">
     <h3>What storage is included, and what does more cost?</h3>
     <p>250 GB on Base and 500 GB above, never charged per user. With video on a video platform, 250 GB lasts a Base-sized institution two to three years. More storage is added in flat blocks at cost.</p>
     <p>Outbound transfer is 500 GB a month on Base and 1 TB above; beyond that it is $50 per TB or part thereof.</p>
   </article>
-  <article id="q6-7" data-n="6.7" data-short="Monitoring" data-kw="monitoring performance alerts on-call status updates incident communication">
+  <article id="q6-7" data-n="6.7" data-short="Monitoring" data-kw="monitoring performance alerts on-call status updates incident communication" data-say="Every instance is monitored around the clock, with alerts going to on-call engineers, and each one has its own status page. During incidents, your administrators get email updates.">
     <h3>How do you monitor performance and keep us informed?</h3>
     <p>Every instance is monitored around the clock, with alerts to on-call engineers and its own status page. During incidents, administrators are updated by email and, where possible, instant messaging.</p>
     <p>Base Plus and above include an annual capacity and health review with a written note.</p>
   </article>
-  <article id="q6-8" data-n="6.8" data-short="Sustainability" data-kw="environment environmental sustainability green energy footprint">
+  <article id="q6-8" data-n="6.8" data-short="Sustainability" data-kw="environment environmental sustainability green energy footprint" data-say="YouMultiply’s footprint is small: a distributed team with no offices, and infrastructure sized to actual load. The hosting provider publishes its own energy-efficiency commitments.">
     <h3>What is your sustainability position?</h3>
     <p>The hosting provider publishes its datacenter energy-efficiency commitments. YouMultiply’s own footprint is small: a distributed team, no offices, and infrastructure sized to actual load.</p>
   </article>
 </section>
 
-<section data-id="s7" data-n="07" data-label="Migration">
-  <article id="q7-1-1" data-n="7.1.1" data-short="Why Canvas moves are low risk" data-kw="migrate migration move switch from canvas risk easy low risk">
+<section data-id="s7" data-n="07" data-label="Migration" data-blurb="What moves, how long it takes and cutover day.">
+  <article id="q7-1-1" data-n="7.1.1" data-short="Why Canvas moves are low risk" data-kw="migrate migration move switch from canvas risk easy low risk" data-say="Because ReachLMS is Canvas. The data model, export format, API and interface are all identical, so content moves without being rebuilt. That’s why a move takes two to eight weeks rather than the usual six to twelve months.">
     <h3>Why is moving from Canvas lower risk than a typical migration?</h3>
     <p>ReachLMS is Canvas. The data model, export format, API, SIS import format and interface are identical, so content moves without being rebuilt and faculty do not retrain.</p>
     <p>A move from hosted Canvas typically takes two to eight weeks from signed order to go-live, against six to twelve months for a conventional LMS migration.</p>
   </article>
-  <article id="q7-1-2" data-n="7.1.2" data-short="What gets migrated" data-kw="what migrated moved transferred courses grades submissions users history inbox not migrated">
+  <article id="q7-1-2" data-n="7.1.2" data-short="What gets migrated" data-kw="what migrated moved transferred courses grades submissions users history inbox not migrated" data-say="Nearly everything moves automatically: courses, files, quizzes, rubrics, users, enrollments, roles and your theme. With a Full implementation, grade history, submissions and inbox messages come too. Historical analytics and student ePortfolios don’t migrate.">
     <h3>Exactly what is migrated, and what is not?</h3>
     <ul>
       <li><strong>Automatic:</strong> courses and content, files, quizzes (Classic and New), rubrics, outcomes, calendar events, users and enrollments, terms, sub-accounts, roles and your theme.</li>
@@ -665,12 +663,12 @@ tbody th { font-weight: 600; }
       <li><strong>Not migrated:</strong> historical analytics and student ePortfolios.</li>
     </ul>
   </article>
-  <article id="q7-2-1" data-n="7.2.1" data-short="Whole database or by course" data-kw="database export dump course by course api export data portability">
+  <article id="q7-2-1" data-n="7.2.1" data-short="Whole database or by course" data-kw="database export dump course by course api export data portability" data-say="Either. If your provider can supply a database export, it’s imported directly and keeps the most history. If not, an automated API export of courses, users, grades and submissions may be possible.">
     <h3>Can you migrate our entire database, or is it course by course?</h3>
     <p>Both. A database export from your provider is imported directly and preserves the most history. Otherwise an automated API export of courses, users, enrollments, grades and submissions may be possible.</p>
     <p>YouMultiply can also help you invoke your contract’s data-portability terms early. Share your current LMS and whether a dump is available for feedback on timeline and cost.</p>
   </article>
-  <article id="q7-2-2" data-n="7.2.2" data-short="Migration timeline" data-kw="how long timeline weeks duration time take quick fast go live schedule">
+  <article id="q7-2-2" data-n="7.2.2" data-short="Migration timeline" data-kw="how long timeline weeks duration time take quick fast go live schedule" data-say="Usually two to eight weeks from signed order to go-live. Under 100 courses with light fixes takes about two to three weeks, while full course upgrades with integrations take four to eight. Your LMS admin should plan for one to two hours a week.">
     <h3>How long does migration take?</h3>
     <p>Two to eight weeks: audit, instance build in your region, SSO/SIS/LTI setup, course import and validation, training, cutover in a semester break, then enhanced support into term.</p>
     <ul>
@@ -680,148 +678,148 @@ tbody th { font-weight: 600; }
     </ul>
     <p>Your LMS administrator should plan one to two hours a week.</p>
   </article>
-  <article id="q7-2-3" data-n="7.2.3" data-short="Who does the work" data-kw="who does work our team effort expected responsibilities project lead">
+  <article id="q7-2-3" data-n="7.2.3" data-short="Who does the work" data-kw="who does work our team effort expected responsibilities project lead" data-say="YouMultiply does the migration, with a project lead working alongside your LMS administrator. Your team picks the cutover date, provides access, and says which courses come first.">
     <h3>Who does the work, and what is expected of our team?</h3>
     <p>YouMultiply does the migration under a Core ($4,000), Full ($9,800) or Managed ($18,800) implementation, with a project lead working with your LMS administrator.</p>
     <p>Your team decides the cutover date, gives access to your current instance and identity provider, and says which courses to prioritize. Faculty need from a few minutes to an hour to check their courses.</p>
   </article>
-  <article id="q7-2-4" data-n="7.2.4" data-short="Cutover day" data-kw="cutover day go live login passwords users change domain links">
+  <article id="q7-2-4" data-n="7.2.4" data-short="Cutover day" data-kw="cutover day go live login passwords users change domain links" data-say="Not much changes for users. With SSO, they sign in with the same institutional credentials. Your domain can move with you, tools like Turnitin and Zoom are set up beforehand, and communication templates are provided.">
     <h3>What changes for users on cutover day?</h3>
     <p>With SSO, users sign in with the same institutional credentials. If accounts were migrated, users reset their password on first login; otherwise they receive registration emails when enrolled.</p>
     <p>Your custom domain can move with you and old links can redirect. Tools such as Turnitin and Zoom are re-registered beforehand, and communication templates are provided for students, faculty and your service desk.</p>
   </article>
-  <article id="q7-2-5" data-n="7.2.5" data-short="Rollback plan" data-kw="rollback go wrong fail problems fallback refund decision gates">
+  <article id="q7-2-5" data-n="7.2.5" data-short="Rollback plan" data-kw="rollback go wrong fail problems fallback refund decision gates" data-say="Keep your old instance read-only through the first weeks of term. There are two decision gates, after validation and after the first week of term. On top of that, the three-month money-back guarantee means you can go back without financial loss.">
     <h3>What is the rollback plan if something goes wrong?</h3>
     <p>Keep your previous instance read-only for as long as your old contract allows, and live through the first weeks of term. There are two decision gates: after course validation, and at the end of the first week of term.</p>
     <p>The three-month money-back guarantee means you can return without financial loss.</p>
   </article>
-  <article id="q7-2-6" data-n="7.2.6" data-short="Timing your move" data-kw="timing when start contract renewal notice period plan pilot">
+  <article id="q7-2-6" data-n="7.2.6" data-short="Timing your move" data-kw="timing when start contract renewal notice period plan pilot" data-say="Check your notice period, auto-renewal terms and data-export rights now, then work back from the semester break you want to move in. Most institutions start this conversation about twelve months before renewal.">
     <h3>How should we time the move against our current contract?</h3>
     <p>Check your notice period, whether the contract auto-renews, and your data-export rights at termination. Work back from the semester break you want to cut over in.</p>
     <p>Most institutions start due diligence twelve months before renewal, run a pilot in the final contract year, and negotiate a short bridge extension only if needed.</p>
   </article>
-  <article id="q7-2-7" data-n="7.2.7" data-short="From Moodle, Blackboard and others" data-kw="moodle blackboard d2l brightspace google classroom other lms non-canvas">
+  <article id="q7-2-7" data-n="7.2.7" data-short="From Moodle, Blackboard and others" data-kw="moodle blackboard d2l brightspace google classroom other lms non-canvas" data-say="Yes. ReachLMS migrates from Moodle, Blackboard, D2L Brightspace and Google Classroom using each system’s export formats, and courses are upgraded to Canvas conventions along the way.">
     <h3>Can you migrate us from Moodle, Blackboard, D2L or Google Classroom?</h3>
     <p>Yes, using each system’s export formats and upgrading courses to Canvas conventions on the way. Institutions coming from non-Canvas systems get the full course-transition service as part of implementation.</p>
   </article>
 </section>
 
-<section data-id="s8" data-n="08" data-label="Integrations">
-  <article id="q8-1" data-n="8.1" data-short="LTI tools" data-kw="lti tools integrations turnitin zoom teams respondus proctorio h5p pearson publisher work">
+<section data-id="s8" data-n="08" data-label="Integrations" data-blurb="LTI tools, SIS, single sign-on and the API.">
+  <article id="q8-1" data-n="8.1" data-short="LTI tools" data-kw="lti tools integrations turnitin zoom teams respondus proctorio h5p pearson publisher work" data-say="Yes. LTI 1.1, 1.3 and Advantage work exactly as they do in Canvas, so tools like Turnitin, Zoom, Teams, Respondus, Proctorio, H5P and publisher content keep working. They’re re-registered before cutover.">
     <h3>Will our existing LTI tools keep working?</h3>
     <p>Yes. LTI 1.1, 1.3 and Advantage work exactly as in Canvas, so Turnitin, Zoom, Microsoft Teams, Google Workspace, Microsoft 365, Panopto, Kaltura, YuJa, Respondus, Proctorio, H5P and publisher content from Pearson, McGraw Hill, Cengage and Wiley continue to work.</p>
     <p>Tools are re-registered before cutover and third-party licenses stay with you. Logos connects through the Logos Library Access Manager.</p>
   </article>
-  <article id="q8-2" data-n="8.2" data-short="SIS integration" data-kw="sis student information system integration reachsis csv sftp grade passback">
+  <article id="q8-2" data-n="8.2" data-short="SIS integration" data-kw="sis student information system integration reachsis csv sftp grade passback" data-say="Through CSV/SFTP imports and the Canvas API, including grade passback. You can keep your current SIS, or use ReachSIS, which is priced on the same flat-fee principle.">
     <h3>How does SIS integration work?</h3>
     <p>Through CSV/SFTP imports and the Canvas API, including grade passback, with help during implementation. Your existing SIS integrates through the same routes as any Canvas instance.</p>
     <p>ReachSIS, YouMultiply’s own SIS, is priced on the same flat-fee principle and puts one team behind both systems.</p>
   </article>
-  <article id="q8-3" data-n="8.3" data-short="SSO providers" data-kw="sso single sign-on login identity saml oauth cas ldap entra okta google">
+  <article id="q8-3" data-n="8.3" data-short="SSO providers" data-kw="sso single sign-on login identity saml oauth cas ldap entra okta google" data-say="SAML 2.0, OpenID Connect and OAuth 2.0, CAS and LDAP. That covers Microsoft Entra ID, Google Workspace, Okta and campus federations, and you can run more than one provider at once.">
     <h3>Which SSO and identity providers are supported?</h3>
     <p>SAML 2.0, OpenID Connect / OAuth 2.0, CAS and LDAP, covering Microsoft Entra ID, Google Workspace, Okta and campus federations. Multiple providers can run on one instance.</p>
   </article>
-  <article id="q8-4" data-n="8.4" data-short="API and data access" data-kw="api rest graphql developer keys data warehouse exports mcp">
+  <article id="q8-4" data-n="8.4" data-short="API and data access" data-kw="api rest graphql developer keys data warehouse exports mcp" data-say="The full Canvas REST and GraphQL APIs, with developer keys you manage, plus scheduled database exports for your BI tools. The MCP server ($1,200) lets your own AI tools connect safely.">
     <h3>What API and data access do we get?</h3>
     <p>The full Canvas REST and GraphQL APIs with your own developer keys and standard rate limiting. Scheduled database exports support data warehousing and BI, and event notifications can be set up on request.</p>
     <p>The MCP server ($1,200) lets you connect your own AI tools to your instance safely.</p>
   </article>
-  <article id="q8-5" data-n="8.5" data-short="Custom integrations" data-kw="marketplace partner custom integration request add new tool">
+  <article id="q8-5" data-n="8.5" data-short="Custom integrations" data-kw="marketplace partner custom integration request add new tool" data-say="Your admins can add LTI tools any time. For anything beyond that, ask support. Most requests are delivered within a few weeks, and integrations that are generally useful are added for everyone at no charge.">
     <h3>Is there an app marketplace or partner program?</h3>
     <p>Your administrators can add LTI tools any time without involving YouMultiply. For anything beyond LTI, ask your support contact; most requests are delivered within a few weeks, and integrations of general use are added for all clients at no charge.</p>
   </article>
 </section>
 
-<section data-id="s9" data-n="09" data-label="Teaching &amp; learning">
-  <article id="q9-1" data-n="9.1" data-short="What users will notice" data-kw="faculty students notice difference change experience retrain retraining look feel">
+<section data-id="s9" data-n="09" data-label="Teaching &amp; learning" data-blurb="Grading, assessment, analytics, AI and languages.">
+  <article id="q9-1" data-n="9.1" data-short="What users will notice" data-kw="faculty students notice difference change experience retrain retraining look feel" data-say="Very little. It’s the same Canvas interface. The visible changes are the mobile app’s name and icon, the annotation tool, and access to interactive content and Reach AI.">
     <h3>Will faculty and students notice a difference?</h3>
     <p>Very little. The interface is Canvas. The visible differences are the mobile app’s name and icon, the SpeedGrader annotation tool, and the availability of interactive content and Reach AI.</p>
     <p>Changes are covered in the included training, and five-minute video walkthroughs are available.</p>
   </article>
-  <article id="q9-2" data-n="9.2" data-short="Grading and feedback" data-kw="grading grades feedback speedgrader rubrics moderated anonymous annotation marking">
+  <article id="q9-2" data-n="9.2" data-short="Grading and feedback" data-kw="grading grades feedback speedgrader rubrics moderated anonymous annotation marking" data-say="Exactly as in Canvas: SpeedGrader, rubrics, audio and video feedback, and anonymous and moderated grading. Plus, in-line PDF annotations are linked to comments, so students are notified.">
     <h3>How do grading and feedback work?</h3>
     <p>SpeedGrader, rubrics, audio and video feedback, anonymous and moderated grading, and grade posting policies all work as in Canvas.</p>
     <p>In-line PDF annotation is included, with each annotation linked to a sidebar comment so students are notified (<a class="xref" href="#q2-3">see 2.3</a>).</p>
   </article>
-  <article id="q9-3" data-n="9.3" data-short="Assessment tools" data-kw="assessment quiz exam proctoring lockdown browser question banks accommodations">
+  <article id="q9-3" data-n="9.3" data-short="Assessment tools" data-kw="assessment quiz exam proctoring lockdown browser question banks accommodations" data-say="Classic Quizzes with question banks and accommodations, interactive HTML5 assessments, and any proctoring or lockdown-browser tool through LTI. Reach AI can even draft quiz questions for faculty to review.">
     <h3>What assessment tools are available?</h3>
     <p>Classic Quizzes with question banks, randomization and per-student accommodations; interactive HTML5 assessments in pages and assignments; and any third-party assessment, proctoring or lockdown-browser tool via LTI.</p>
     <p>Reach AI can draft quiz questions and rubrics for faculty to review.</p>
   </article>
-  <article id="q9-4" data-n="9.4" data-short="Reusing content" data-kw="share reuse content templates blueprint campuses course copy">
+  <article id="q9-4" data-n="9.4" data-short="Reusing content" data-kw="share reuse content templates blueprint campuses course copy" data-say="With Blueprint courses, templates, course copy and IMSCC import and export. Your implementation includes one to six custom templates, depending on the package.">
     <h3>How do we share and reuse content across courses and campuses?</h3>
     <p>Blueprint courses, course templates (one with Core, up to three with Full, up to six with Managed), course copy, and IMSCC import and export. A shared content library is on the roadmap.</p>
   </article>
-  <article id="q9-6" data-n="9.6" data-short="Analytics for users" data-kw="analytics instructors students progress at risk login activity">
+  <article id="q9-6" data-n="9.6" data-short="Analytics for users" data-kw="analytics instructors students progress at risk login activity" data-say="Instructors see course analytics and per-student activity, and students see their own progress. Administrators can ask Reach AI questions like “which students have not logged in for two weeks?”">
     <h3>What analytics do instructors and students see?</h3>
     <p>Instructors see course analytics and per-student activity, participation and grades; students see their own progress.</p>
     <p>Administrators get Canvas reports, scheduled exports and Reach AI, which answers questions like “which students have not logged in for two weeks?” in plain English.</p>
   </article>
-  <article id="q9-7" data-n="9.7" data-short="Outcomes-based programs" data-kw="competency outcomes mastery paths accreditation evidence">
+  <article id="q9-7" data-n="9.7" data-short="Outcomes-based programs" data-kw="competency outcomes mastery paths accreditation evidence" data-say="They’re fully supported. Learning outcomes, Mastery Paths and outcome reporting are core features, and outcome results can be exported as evidence for accreditors.">
     <h3>What about competency- and outcomes-based programs?</h3>
     <p>Learning outcomes, Mastery Paths and outcome reporting are core features, and outcome results can be exported as accreditation evidence for regional and professional accreditors.</p>
   </article>
-  <article id="q9-8" data-n="9.8" data-short="Reach AI" data-kw="ai artificial intelligence reach ai chatgpt openai anthropic llm assistant mcp bring your own key">
+  <article id="q9-8" data-n="9.8" data-short="Reach AI" data-kw="ai artificial intelligence reach ai chatgpt openai anthropic llm assistant mcp bring your own key" data-say="Reach AI is an assistant for faculty and admins, currently in beta. It can build courses, bulk-edit content, run admin tasks in natural language, query student data in plain English, write quiz questions and summarize discussions.">
     <h3>What AI features are available?</h3>
     <p>Reach AI (beta) is an assistant for faculty and administrators. It can design and build courses, bulk-edit settings and content, search your account, carry out admin tasks in natural language, query student data in plain English, write quiz questions and rubrics, and summarize discussions.</p>
     <p>“Beta” means the feature set is still growing; it is fully supported and updates are included.</p>
   </article>
-  <article id="q9-8b" data-n="9.8" data-short="AI pricing and policy" data-kw="ai price cost policy data training student off api key provider">
+  <article id="q9-8b" data-n="9.8" data-short="AI pricing and policy" data-kw="ai price cost policy data training student off api key provider" data-say="Reach AI is $5,800 to set up and then free when you bring your own API key, which also means you choose the AI provider. It’s off for students by default and never trained on your data. The MCP server is $1,200.">
     <h3>What does AI cost, and what is the AI policy?</h3>
     <p>Reach AI costs $5,800 to set up and is then free with your own API key from a supported provider (OpenAI, Anthropic, Google and others), so you decide who handles your data. A quote is available to use YouMultiply’s provider. The MCP server ($1,200) connects AI tools you already have.</p>
     <p>AI is enabled per institution, for faculty and administrators; student use is off by default. It is never trained on your data.</p>
   </article>
-  <article id="q9-9" data-n="9.9" data-short="Languages" data-kw="languages language locale translation arabic hebrew rtl">
+  <article id="q9-9" data-n="9.9" data-short="Languages" data-kw="languages language locale translation arabic hebrew rtl" data-say="The Canvas interface comes in more than thirty languages, including right-to-left languages like Arabic and Hebrew, and each user picks their own. The added ReachLMS components are in English, with other languages on request.">
     <h3>Which languages are supported?</h3>
     <p>The Canvas interface is available in more than thirty languages, including right-to-left languages such as Arabic and Hebrew, and users choose their own. Added components are in English, with other languages on request.</p>
     <p>Paid translation projects are available for languages Canvas does not yet support.</p>
   </article>
-  <article id="q9-10" data-n="9.10" data-short="Notifications" data-kw="notifications email sms text push alerts">
+  <article id="q9-10" data-n="9.10" data-short="Notifications" data-kw="notifications email sms text push alerts" data-say="Email notifications come as standard, and push notifications arrive through the mobile apps. Students set their own preferences. SMS is a paid add-on, quoted for your region.">
     <h3>How do notifications work?</h3>
     <p>Email notifications, plus push notifications with the mobile apps. Students control their own preferences. SMS is a paid add-on, quoted from network provider pricing in your region.</p>
   </article>
-  <article id="q9-11" data-n="9.11" data-short="Short courses and K-12" data-kw="short courses continuing education cohorts k-12 parents observer non-traditional">
+  <article id="q9-11" data-n="9.11" data-short="Short courses and K-12" data-kw="short courses continuing education cohorts k-12 parents observer non-traditional" data-say="Yes. The e-commerce add-on handles open enrollment, payments and certificates. Observer roles cover K-12 and parents, and extension sites can share an instance at no extra cost.">
     <h3>Does it work for short courses, continuing education or K-12?</h3>
     <p>Yes. The e-commerce add-on supports open enrollment, payments and certificates; observer roles support K-12 and parents; and sister institutions or extension sites can share an instance at no extra cost.</p>
     <p>Certificates are set up per course, ten included, then $67 per hour.</p>
   </article>
 </section>
 
-<section data-id="s10" data-n="10" data-label="Administration">
-  <article id="q10-1" data-n="10.1" data-short="Admin experience" data-kw="admin administration administrator settings same canvas">
+<section data-id="s10" data-n="10" data-label="Administration" data-blurb="Admin tools, releases, reports and audit logs.">
+  <article id="q10-1" data-n="10.1" data-short="Admin experience" data-kw="admin administration administrator settings same canvas" data-say="Yes, it’s the standard Canvas admin experience: sub-accounts, roles, terms, SIS imports, the Theme Editor and reports. Reach AI adds bulk editing and natural-language admin.">
     <h3>Is the admin experience the same as Canvas?</h3>
     <p>Yes: sub-accounts, roles and permissions, terms, SIS imports, feature options, Theme Editor, developer keys, authentication settings and reports. Reach AI adds bulk editing and natural-language administration.</p>
   </article>
-  <article id="q10-2" data-n="10.2" data-short="Controlling releases" data-kw="releases updates upgrades defer control schedule new features">
+  <article id="q10-2" data-n="10.2" data-short="Controlling releases" data-kw="releases updates upgrades defer control schedule new features" data-say="Releases are tested before they’re deployed. You can defer a non-security upgrade by one cycle if the timing is bad, but security patches are never deferred.">
     <h3>How do releases work, and can we control them?</h3>
     <p>Upstream releases are deployed after testing. A non-security upgrade can be deferred by one release cycle if it would land at a bad time; security patches are never deferred. The optional test instance gets each release first.</p>
   </article>
-  <article id="q10-3" data-n="10.3" data-short="Admin reporting" data-kw="reports reporting administrator custom reports grade export provisioning">
+  <article id="q10-3" data-n="10.3" data-short="Admin reporting" data-kw="reports reporting administrator custom reports grade export provisioning" data-say="All the standard Canvas reports, scheduled exports to your BI tool, and Reach AI for one-off questions. Custom reports are $67 an hour.">
     <h3>What reporting is available to administrators?</h3>
     <p>Standard Canvas reports (provisioning, grade export, last user access, unused courses, outcome results and more), scheduled BI exports, and Reach AI for ad hoc questions. Custom reports are $67 per hour.</p>
   </article>
-  <article id="q10-4" data-n="10.4" data-short="Audit logs" data-kw="audit logs logging compliance retention authentication grade change">
+  <article id="q10-4" data-n="10.4" data-short="Audit logs" data-kw="audit logs logging compliance retention authentication grade change" data-say="Authentication, grade change, course activity and admin activity logs, all kept for twelve months. Longer retention is available by export on request.">
     <h3>What audit logging is available?</h3>
     <p>Authentication, grade change, course activity and administrator activity logs, kept for twelve months. Exports are available on request for longer retention or audit.</p>
   </article>
-  <article id="q10-5" data-n="10.5" data-short="Custom development" data-kw="custom development customization bespoke features css javascript hourly rate">
+  <article id="q10-5" data-n="10.5" data-short="Custom development" data-kw="custom development customization bespoke features css javascript hourly rate" data-say="Custom CSS and JavaScript are supported. Bespoke features are quoted separately at $67 an hour and built to survive upgrades.">
     <h3>How much custom development can we request?</h3>
     <p>Custom CSS and JavaScript are supported. Bespoke features and integrations are quoted separately and built to survive upstream upgrades, at $67 per hour.</p>
   </article>
 </section>
 
-<section data-id="s11" data-n="11" data-label="Support">
-  <article id="q11-1" data-n="11.1" data-short="How support works" data-kw="support help structure hours included engineering team christian">
+<section data-id="s11" data-n="11" data-label="Support" data-blurb="Who can contact support, channels, hours and targets.">
+  <article id="q11-1" data-n="11.1" data-short="How support works" data-kw="support help structure hours included engineering team christian" data-say="Support has no per-user cost. Base includes three hours a month and Base Plus and above five, then it’s $67 an hour. Support agents have a direct line to the engineers, and critical issues are always handled, even if you’ve used up your hours.">
     <h3>How is support structured?</h3>
     <p>Support has no per-user cost. Base includes three hours a month, Base Plus and above five, then $67 per hour. Your own administrators can handle first-line questions to save hours, and agents have a direct line to engineers rather than a ticket queue.</p>
     <p>Critical issues reported by administrators are always handled, even when hours run out. The support team are Christians who understand theological education.</p>
   </article>
-  <article id="q11-2" data-n="11.2" data-short="Who can contact support" data-kw="who contact support students faculty teachers directly whatsapp email phone">
+  <article id="q11-2" data-n="11.2" data-short="Who can contact support" data-kw="who contact support students faculty teachers directly whatsapp email phone" data-say="Yes, everyone can. WhatsApp and email support are open to all users, students and faculty included, on every plan. Phone support is for administrators, and for faculty too on the 24/7 plan.">
     <h3>Can faculty and students contact support directly?</h3>
     <p>Yes. WhatsApp and email support are open to all users on every plan. Phone support is for administrators on the included plan (6am to 3pm US Eastern) and for administrators and faculty on the 24/7 plan.</p>
     <p>Hosted enterprise contracts usually charge for this as a percentage of subscription plus a per-user fee.</p>
   </article>
-  <article id="q11-3" data-n="11.3" data-short="Support plans and hours" data-kw="support hours channels 24/7 plan basic phone holidays price cost">
+  <article id="q11-3" data-n="11.3" data-short="Support plans and hours" data-kw="support hours channels 24/7 plan basic phone holidays price cost" data-say="Basic support is included: WhatsApp and email for everyone, plus phone for admins from 6am to 3pm US Eastern. The 24/7 plan is $1,200 a month and adds round-the-clock phone support for admins and faculty.">
     <h3>What channels and hours are available?</h3>
     <ul>
       <li><strong>Basic (included):</strong> WhatsApp and email for everyone; phone for administrators 6am–3pm US Eastern; 3 hours/month on Base, 5 on Base Plus and above.</li>
@@ -829,7 +827,7 @@ tbody th { font-weight: 600; }
     </ul>
     <p>Both plans are staffed through public holidays.</p>
   </article>
-  <article id="q11-4" data-n="11.4" data-short="Response targets" data-kw="response time sla resolution priority p1 p2 how fast respond">
+  <article id="q11-4" data-n="11.4" data-short="Response targets" data-kw="response time sla resolution priority p1 p2 how fast respond" data-say="On the Basic plan, you’ll get a response within an hour during 6am to 3pm US Eastern. On 24/7, it’s within five minutes. A full platform outage gets continuous work and a contractual commitment backed by service credits.">
     <h3>What are the response and resolution targets?</h3>
     <p>Basic: within one hour from 6am to 3pm US Eastern, otherwise the next business morning. 24/7: within five minutes in those hours, with phones answered around the clock.</p>
     <ul>
@@ -838,17 +836,17 @@ tbody th { font-weight: 600; }
       <li><strong>P3/P4</strong> (individual issues): within two business days.</li>
     </ul>
   </article>
-  <article id="q11-5" data-n="11.5" data-short="Account manager and escalation" data-kw="account manager customer success named contact escalation cto">
+  <article id="q11-5" data-n="11.5" data-short="Account manager and escalation" data-kw="account manager customer success named contact escalation cto" data-say="Yes. The lead who ran your implementation stays your named contact, with a review call each semester. Your administrators can also escalate straight to the CTO at any time.">
     <h3>Do we get a named contact, and how do escalations work?</h3>
     <p>Your implementation lead stays your named contact after go-live, with a review call each semester.</p>
     <p>Unresolved issues go to the engineering lead, and anything open beyond one business day goes to the CTO. Your administrators can escalate to the CTO directly at any time.</p>
   </article>
-  <article id="q11-7" data-n="11.7" data-short="Training and self-service" data-kw="training sessions self-service knowledge base guides recorded on-site">
+  <article id="q11-7" data-n="11.7" data-short="Training and self-service" data-kw="training sessions self-service knowledge base guides recorded on-site" data-say="Every implementation includes training: three sessions with Core, six with Full and up to ten hours with Managed, all recorded for reuse. Extra training is $67 an hour, and the public Canvas guides apply too.">
     <h3>What training and self-service resources are included?</h3>
     <p>Core includes up to three one-hour live sessions, Full six, and Managed up to ten hours, all remote and recorded for reuse. Extra training is $67 per hour with no minimum; on-site training is quoted.</p>
     <p>Canvas Community guides apply as-is, and a ReachLMS knowledge base is in development.</p>
   </article>
-  <article id="q11-10" data-n="11.10" data-short="Support compared" data-kw="support comparison compare enterprise canvas table">
+  <article id="q11-10" data-n="11.10" data-short="Support compared" data-kw="support comparison compare enterprise canvas table" data-say="Here’s a side-by-side look at support from enterprise Canvas and from ReachLMS.">
     <h3>How does support compare with enterprise Canvas?</h3>
     <div class="tbl mid"><table>
       <thead><tr><th></th><th>Enterprise Canvas</th><th>ReachLMS</th></tr></thead>
@@ -866,8 +864,8 @@ tbody th { font-weight: 600; }
   </article>
 </section>
 
-<section data-id="s12" data-n="12" data-label="Pricing &amp; costs">
-  <article id="q12-1" data-n="12.1" data-short="How pricing works" data-kw="price pricing cost how much fee annual subscription per user flat budget expensive dollars">
+<section data-id="s12" data-n="12" data-label="Pricing &amp; costs" data-blurb="Flat pricing, add-ons, contract terms and total cost.">
+  <article id="q12-1" data-n="12.1" data-short="How pricing works" data-kw="price pricing cost how much fee annual subscription per user flat budget expensive dollars" data-say="ReachLMS charges a flat annual fee per instance, never per user. Base is $7,800 a year, Base Plus $12,180, Large $19,740 and Extra Large $29,100. Your price doesn’t go up when enrollment grows.">
     <h3>How much does ReachLMS cost?</h3>
     <p>A flat annual fee per instance, never per user:</p>
     <div class="tbl"><table>
@@ -880,7 +878,7 @@ tbody th { font-weight: 600; }
     </table></div>
     <p>Your price does not rise with enrollment, only if you need a bigger instance. Add a one-time implementation fee from $4,000 (<a class="xref" href="#q12-4">see 12.4</a>). Prices are in US dollars.</p>
   </article>
-  <article id="q12-1b" data-n="12.1" data-short="Small schools and self-host" data-kw="small institution shared instance saver premium per user cheap self-host own cloud price">
+  <article id="q12-1b" data-n="12.1" data-short="Small schools and self-host" data-kw="small institution shared instance saver premium per user cheap self-host own cloud price" data-say="For very small schools, there’s a shared instance from $50 a month including 50 users. If you’d rather host it on your own cloud, that’s $12,500 to set up plus $4,950 a year.">
     <h3>What are the options for small schools or self-hosting?</h3>
     <ul>
       <li><strong>Shared, Saver:</strong> $50/month including 50 users, then $0.50 per user per month.</li>
@@ -888,12 +886,12 @@ tbody th { font-weight: 600; }
       <li><strong>Self-host:</strong> $12,500 setup and $4,950/year license and maintenance, with hosting at cost.</li>
     </ul>
   </article>
-  <article id="q12-2" data-n="12.2" data-short="What's included" data-kw="included subscription what do we get base price covers">
+  <article id="q12-2" data-n="12.2" data-short="What's included" data-kw="included subscription what do we get base price covers" data-say="The subscription covers dedicated hosting, storage, daily backups, all upgrades and patches, Basic support, WhatsApp and email support for everyone, annotations, SSO, the 99.9% uptime commitment, Logos access and six months of EVERYWORD Premium.">
     <h3>What is included in the subscription?</h3>
     <p>Dedicated hosting in your region, storage, daily backups, all upgrades and patches, Basic support, WhatsApp and email support for all users, annotations, the HTML5 content hub, LTI and API access, SSO, the 99.9% uptime commitment, Logos library access, and six months of EVERYWORD Premium for every user.</p>
     <p>Base Plus and above add 500 GB storage, 14-day backups, test environments and an annual health review.</p>
   </article>
-  <article id="q12-3" data-n="12.3" data-short="Add-on prices" data-kw="add-ons extras optional sold separately price cost app ecommerce video ai">
+  <article id="q12-3" data-n="12.3" data-short="Add-on prices" data-kw="add-ons extras optional sold separately price cost app ecommerce video ai" data-say="The optional extras include the white-labeled app, e-commerce, a video platform, Reach AI, the MCP server, a permanent test instance, longer backups and 24/7 support. None of them carries a per-user fee.">
     <h3>What is sold separately?</h3>
     <div class="tbl"><table>
       <thead><tr><th>Add-on</th><th class="num">Setup</th><th class="num">Recurring</th></tr></thead>
@@ -911,11 +909,11 @@ tbody th { font-weight: 600; }
       </tbody>
     </table></div>
   </article>
-  <article id="q12-4" data-n="12.4" data-short="One-time costs" data-kw="one-time setup implementation fee upfront cost onboarding">
+  <article id="q12-4" data-n="12.4" data-short="One-time costs" data-kw="one-time setup implementation fee upfront cost onboarding" data-say="There’s one implementation fee: Core is $4,000, Full $9,800 and Managed $18,800. Optional add-ons have their own setup fees.">
     <h3>What are the one-time costs?</h3>
     <p>Core implementation $4,000; Full $9,800; Managed $18,800 (<a class="xref" href="#q15-2">compare packages</a>). Add-on setup fees are listed in 12.3, and self-host setup is $12,500.</p>
   </article>
-  <article id="q12-5" data-n="12.5" data-short="Contract terms" data-kw="contract terms monthly annual notice renewal cap money-back guarantee invoice purchase order consortium">
+  <article id="q12-5" data-n="12.5" data-short="Contract terms" data-kw="contract terms monthly annual notice renewal cap money-back guarantee invoice purchase order consortium" data-say="You can choose month-to-month or annual terms, with no multi-year lock-in. Prices are locked for your term, renewal increases are capped at 6%, and new implementations get a three-month money-back guarantee.">
     <h3>What contract terms are offered?</h3>
     <ul>
       <li>Month-to-month (30 days’ notice) or annual (60 days’ notice); no multi-year commitment.</li>
@@ -925,80 +923,80 @@ tbody th { font-weight: 600; }
       <li>Sister institutions can share one instance at no extra platform cost.</li>
     </ul>
   </article>
-  <article id="q12-6" data-n="12.6" data-short="Compared with Canvas" data-kw="compare total cost ownership tco savings enterprise canvas contract cheaper fte">
+  <article id="q12-6" data-n="12.6" data-short="Compared with Canvas" data-kw="compare total cost ownership tco savings enterprise canvas contract cheaper fte" data-say="The pack gives an example: a 3,000-student institution paying about $20 per FTE spends roughly $60,000 a year on its Canvas license alone, before add-ons. The equivalent ReachLMS instance is $19,740 a year.">
     <h3>How does total cost compare with enterprise Canvas?</h3>
     <p>Add up your subscription, any 24/7 or end-user support tier, video, Catalog, badges, storage overage, training, implementation fees and annual escalators, then compare.</p>
     <p>Example: a 3,000-student institution paying about $20 per FTE for its core license alone spends roughly $60,000 a year before add-ons. The equivalent ReachLMS Large instance is $19,740 a year. See <a class="xref" href="#qB-1">Appendix B</a> for public-record pricing.</p>
   </article>
-  <article id="q12-7" data-n="12.7" data-short="Possible cost increases" data-kw="hidden costs unexpected increase surprise extra fees tier upgrade support overage">
+  <article id="q12-7" data-n="12.7" data-short="Possible cost increases" data-kw="hidden costs unexpected increase surprise extra fees tier upgrade support overage" data-say="Two things can change. You might use more support than your included hours, and you’d be warned first. Or you might need a bigger tier, which is only recommended on sustained evidence and billed as the difference. Renewals are capped at 6%.">
     <h3>What unexpected cost increases might we see?</h3>
     <p><strong>Support beyond your hours.</strong> You are told when you near the limit, and a sized retainer can be agreed if it recurs.</p>
     <p><strong>A bigger tier.</strong> Recommended only on sustained evidence (near capacity at peak for over two weeks, slow pages, or slow background tasks), billed at the difference: $4,380/yr Base→Base Plus, $7,560 Base Plus→Large, $9,360 Large→Extra Large.</p>
     <p>Renewals are capped at 6%, with no termination or export fees.</p>
   </article>
-  <article id="q12-8" data-n="12.8" data-short="Cost to leave, and trials" data-kw="cost to leave exit fee pilot trial demo sandbox free test before buying">
+  <article id="q12-8" data-n="12.8" data-short="Cost to leave, and trials" data-kw="cost to leave exit fee pilot trial demo sandbox free test before buying" data-say="Leaving costs nothing, because your data is exported in full for free. You can also try before you commit: a free 30-day demo account, or a one-semester pilot whose fee counts toward implementation.">
     <h3>What does it cost to leave, and can we try it first?</h3>
     <p>Leaving costs nothing: your data is exported in full at no charge.</p>
     <p>A free 30-day demo account is available, loaded with sample courses or some of your own. A formal one-semester pilot with a live cohort is also possible; its fee is credited against implementation if you proceed.</p>
   </article>
-  <article id="q12-10" data-n="12.10" data-short="Why prices are lower" data-kw="why cheap lower price cheaper suspicious sustainable cutting corners business model">
+  <article id="q12-10" data-n="12.10" data-short="Why prices are lower" data-kw="why cheap lower price cheaper suspicious sustainable cutting corners business model" data-say="Because you pay per server, not per user, and support is billed by the hour, not per user. A small expert team, automation, no acquisition debt and no offices keep costs down.">
     <h3>Why are the prices so much lower?</h3>
     <p>You may pay less than half your current contract. The business model means your growth is not the revenue model: you pay per server, not per user, and support is billed by the hour, not per user.</p>
     <p>A small expert team, modern infrastructure, automation, no acquisition debt, no profit-maximizing investors and no offices keep costs low while funding reliable service.</p>
   </article>
 </section>
 
-<section data-id="s13" data-n="13" data-label="Contract &amp; legal">
-  <article id="q13-1" data-n="13.1" data-short="Documents you'll sign" data-kw="documents sign contract msa order form sla dpa acceptable use legal">
+<section data-id="s13" data-n="13" data-label="Contract &amp; legal" data-blurb="Documents, liability, IP, law and procurement.">
+  <article id="q13-1" data-n="13.1" data-short="Documents you'll sign" data-kw="documents sign contract msa order form sla dpa acceptable use legal" data-say="An Order Form with the Master Services Agreement. If you need them, there’s also a Service Level Agreement, a Data Processing Agreement and an Acceptable Use Policy, and templates are available for your legal team.">
     <h3>What documents will we sign?</h3>
     <p>An Order Form with the Master Services Agreement. If required, also a Service Level Agreement, a Data Processing Agreement and an Acceptable Use Policy. Templates are available on request for legal review.</p>
   </article>
-  <article id="q13-2" data-n="13.2" data-short="Liability and insurance" data-kw="liability indemnity insurance cyber cap legal protection">
+  <article id="q13-2" data-n="13.2" data-short="Liability and insurance" data-kw="liability indemnity insurance cyber cap legal protection" data-say="Liability is capped at twelve months of fees, with uncapped indemnities for confidentiality, data protection and IP claims. There’s no cyber liability insurance at the moment, so raise it if your procurement needs it.">
     <h3>What liability, indemnity and insurance protections apply?</h3>
     <p>Liability is capped at fees paid in the preceding twelve months, with uncapped indemnities for breach of confidentiality and data-protection obligations and for third-party IP claims.</p>
     <p>There is no cyber liability insurance currently; raise it if your procurement requires it and a plan will be agreed.</p>
   </article>
-  <article id="q13-3" data-n="13.3" data-short="Termination and exit terms" data-kw="termination terminate exit cancel notice auto-renewal deletion">
+  <article id="q13-3" data-n="13.3" data-short="Termination and exit terms" data-kw="termination terminate exit cancel notice auto-renewal deletion" data-say="Exit terms are simple. You give 30 or 60 days’ notice with no auto-renewal traps, get a free full export, and then deletion is certified. New implementations also get a three-month money-back guarantee.">
     <h3>What are the termination and exit provisions?</h3>
     <p>Month-to-month or annual terms; 30 or 60 days’ notice; no auto-renewal traps; a free full data export with 60 days to verify it; certified deletion afterwards; and a three-month money-back guarantee on new implementations.</p>
   </article>
-  <article id="q13-4" data-n="13.4" data-short="Intellectual property" data-kw="intellectual property ip ownership customizations templates who owns">
+  <article id="q13-4" data-n="13.4" data-short="Intellectual property" data-kw="intellectual property ip ownership customizations templates who owns" data-say="You own your content and data, plus the templates, branding and e-commerce courses made for you. YouMultiply keeps the IP in its own proprietary features.">
     <h3>Who owns intellectual property, including customizations?</h3>
     <p>You own your content and data, plus configuration and content made for you (templates, branding, e-commerce courses). Canvas core code is open source under AGPLv3.</p>
     <p>IP in YouMultiply’s proprietary features stays with YouMultiply, even when a client funds it, and may benefit all clients.</p>
   </article>
-  <article id="q13-5" data-n="13.5" data-short="Governing law" data-kw="governing law jurisdiction disputes delaware mediation courts">
+  <article id="q13-5" data-n="13.5" data-short="Governing law" data-kw="governing law jurisdiction disputes delaware mediation courts" data-say="Delaware law by default, though your own jurisdiction can be considered if your procurement rules require it. Disputes go to negotiation, then mediation, before any court.">
     <h3>What governing law and dispute resolution apply?</h3>
     <p>Delaware law by default; your jurisdiction’s law can be considered where procurement rules require it. Disputes go to negotiation, then mediation, before any court.</p>
   </article>
-  <article id="q13-6" data-n="13.6" data-short="Procurement support" data-kw="procurement rfp tender vendor registration w-9 sole source documents">
+  <article id="q13-6" data-n="13.6" data-short="Procurement support" data-kw="procurement rfp tender vendor registration w-9 sole source documents" data-say="YouMultiply can respond to RFPs and tenders, supply security and privacy documents, register as a vendor, provide a W-9 for US institutions, and connect you with references.">
     <h3>How do you support our procurement process?</h3>
     <p>RFP and tender responses, a HECVAT on request, security and privacy documentation, vendor registration, tax documents (including a W-9 for US institutions), references, and sole-source justification where appropriate.</p>
   </article>
-  <article id="q13-7" data-n="13.7" data-short="Acquisition and records" data-kw="acquired acquisition change of control force majeure records retention public records">
+  <article id="q13-7" data-n="13.7" data-short="Acquisition and records" data-kw="acquired acquisition change of control force majeure records retention public records" data-say="Agreements bind any acquirer, and you’d get 90 days’ notice of a change of control, during which you can leave without penalty and take your data.">
     <h3>What happens on acquisition, and how are records kept?</h3>
     <p>Agreements bind any successor, with 90 days’ notice of a change of control during which you can terminate without penalty and take your data. Force majeure never excuses data-protection or data-return obligations.</p>
     <p>Contracting records are kept for the agreement plus seven years, with cooperation on public-records and audit requests.</p>
   </article>
 </section>
 
-<section data-id="s14" data-n="14" data-label="Risk &amp; exit">
-  <article id="q14-1" data-n="14.1" data-short="Leaving ReachLMS" data-kw="leave leaving exit lock-in lockin switch away export imscc easy">
+<section data-id="s14" data-n="14" data-label="Risk &amp; exit" data-blurb="Leaving, lock-in and how risks are mitigated.">
+  <article id="q14-1" data-n="14.1" data-short="Leaving ReachLMS" data-kw="leave leaving exit lock-in lockin switch away export imscc easy" data-say="Easy, and free. Courses export as standard IMSCC files, your data comes out through the API or a full database export, and the same open-source platform runs anywhere.">
     <h3>How easy is it to leave ReachLMS?</h3>
     <p>Easy, and free. Courses export in standard IMSCC format, data moves via the Canvas API or a full database export, and there is no proprietary format to unwind.</p>
     <p>The same open-source platform runs at other hosts or on your own servers.</p>
   </article>
-  <article id="q14-2" data-n="14.2" data-short="If ReachLMS closed" data-kw="out of business closes bankrupt shut down disappears vendor fails">
+  <article id="q14-2" data-n="14.2" data-short="If ReachLMS closed" data-kw="out of business closes bankrupt shut down disappears vendor fails" data-say="Your data and the open-source platform would still exist, so any Canvas host or your own IT team could take over. The pack recommends keeping a current database export as a matter of routine.">
     <h3>What if ReachLMS went out of business?</h3>
     <p>Your data and the open-source platform would still exist, and any Canvas host or your own IT team could take over, with exports and handover help provided where possible.</p>
     <p>Keep a current copy of your database export routinely; it is provided on request.</p>
   </article>
-  <article id="q14-3" data-n="14.3" data-short="Dependence on Instructure" data-kw="instructure dependence depend open source stop license change fork">
+  <article id="q14-3" data-n="14.3" data-short="Dependence on Instructure" data-kw="instructure dependence depend open source stop license change fork" data-say="Less than you might think. Code released under AGPLv3 can’t be taken back, a large community depends on it, and YouMultiply can maintain the components it relies on.">
     <h3>How dependent are you on Instructure open-sourcing Canvas?</h3>
     <p>Less than it might appear. AGPLv3 code cannot be recalled, a large community would quickly maintain a fork, and YouMultiply can maintain the components it relies on.</p>
     <p>Because YouMultiply does not control the core code, it cannot lock you into it either.</p>
   </article>
-  <article id="q14-4" data-n="14.4" data-short="Main risks and mitigations" data-kw="risks risk mitigation concerns downsides what could go wrong">
+  <article id="q14-4" data-n="14.4" data-short="Main risks and mitigations" data-kw="risks risk mitigation concerns downsides what could go wrong" data-say="The pack names five risks and how each is handled: feature gaps, data loss, broken integrations, user confusion and small-vendor risk.">
     <h3>What are the main risks of moving, and how are they handled?</h3>
     <ul>
       <li><strong>Feature gaps:</strong> named in the comparison; test in a sandbox first.</li>
@@ -1010,12 +1008,12 @@ tbody th { font-weight: 600; }
   </article>
 </section>
 
-<section data-id="s15" data-n="15" data-label="Implementation">
-  <article id="q15-1" data-n="15.1" data-short="Typical implementation" data-kw="implementation onboarding setup typical process phases go live">
+<section data-id="s15" data-n="15" data-label="Implementation" data-blurb="Implementation packages and adoption support.">
+  <article id="q15-1" data-n="15.1" data-short="Typical implementation" data-kw="implementation onboarding setup typical process phases go live" data-say="Two to eight weeks from signed order to go-live, with the cutover at a semester boundary and extra support while term gets going.">
     <h3>What does a typical implementation look like?</h3>
     <p>Two to eight weeks from signed order to go-live, cut over at a semester boundary, followed by enhanced support and monitoring. The phases are set out in the <a class="xref" href="#q7-2-2">migration timeline</a>.</p>
   </article>
-  <article id="q15-2" data-n="15.2" data-short="Packages: scope" data-kw="implementation packages core full managed compare courses price cost which package">
+  <article id="q15-2" data-n="15.2" data-short="Packages: scope" data-kw="implementation packages core full managed compare courses price cost which package" data-say="There are three packages: Core for $4,000, Full for $9,800 and Managed for $18,800. They differ mainly in how many courses are moved and refreshed, and whether your grade history comes across.">
     <h3>Implementation packages: what’s covered</h3>
     <div class="tbl wide"><table>
       <thead><tr><th></th><th>Core · $4,000</th><th>Full · $9,800</th><th>Managed · $18,800</th></tr></thead>
@@ -1030,7 +1028,7 @@ tbody th { font-weight: 600; }
     </table></div>
     <p class="note">* A course is up to 15 modules or 150 items; larger courses count as two.</p>
   </article>
-  <article id="q15-2b" data-n="15.2" data-short="Packages: delivery" data-kw="implementation packages training project management validation go-live support">
+  <article id="q15-2b" data-n="15.2" data-short="Packages: delivery" data-kw="implementation packages training project management validation go-live support" data-say="The bigger packages bring more training, more hands-on project management and longer support after go-live.">
     <h3>Implementation packages: how they’re delivered</h3>
     <div class="tbl wide"><table>
       <thead><tr><th></th><th>Core</th><th>Full</th><th>Managed</th></tr></thead>
@@ -1043,65 +1041,77 @@ tbody th { font-weight: 600; }
       </tbody>
     </table></div>
   </article>
-  <article id="q15-3" data-n="15.3" data-short="Adoption support" data-kw="change management adoption champions communication onboarding course faculty">
+  <article id="q15-3" data-n="15.3" data-short="Adoption support" data-kw="change management adoption champions communication onboarding course faculty" data-say="You get communication templates, a user onboarding course, recorded training and help choosing faculty champions in each department. After go-live, usage reports show which departments have adopted the platform.">
     <h3>What change management and adoption support is provided?</h3>
     <p>Communication templates for students, faculty and your service desk; a user onboarding course; recorded training; and help choosing faculty champions in each department who get extra training.</p>
     <p>After go-live, usage reports show which departments have adopted the platform and where a follow-up session would help.</p>
   </article>
-  <article id="q15-4" data-n="15.4" data-short="Reviewing success" data-kw="success review after go-live check-in semester refund">
+  <article id="q15-4" data-n="15.4" data-short="Reviewing success" data-kw="success review after go-live check-in semester refund" data-say="Through enhanced support in the first weeks of term, then a check-in and a review call each semester. Within the first three months, you can leave with a refund.">
     <h3>How is success reviewed after go-live?</h3>
     <p>Enhanced support through the first weeks of term, a check-in once the semester settles, then a review call each semester. Within three months, if ReachLMS does not meet your needs, you can leave with a refund.</p>
   </article>
 </section>
 
-<section data-id="s16" data-n="16" data-label="Objections &amp; myths">
-  <article id="q16-1" data-n="16.1" data-short="“Open source is less secure”" data-kw="open source less secure security myth objection">
+<section data-id="s16" data-n="16" data-label="Objections &amp; myths" data-blurb="Common concerns, answered from the pack.">
+  <article id="q16-1" data-n="16.1" data-short="“Open source is less secure”" data-kw="open source less secure security myth objection" data-say="The pack’s answer: security depends on how a system is run, not its license. ReachLMS patches critical issues within 72 hours, and the sector’s largest breach happened on a hosted commercial platform.">
     <h3>“Open source is less secure than a commercial platform.”</h3>
     <p>ReachLMS runs on publicly auditable Canvas code, patched within 72 hours of a critical release. The sector’s largest breach happened on a hosted commercial platform.</p>
     <p>Security depends on how a system is operated, not its license, and a dedicated instance per institution removes the single point of failure.</p>
   </article>
-  <article id="q16-2" data-n="16.2" data-short="“We’ll lose features”" data-kw="lose features missing gaps objection">
+  <article id="q16-2" data-n="16.2" data-short="“We’ll lose features”" data-kw="lose features missing gaps objection" data-say="The real differences are three New Quizzes question types, which are covered by interactive HTML5 content, plus a few products most institutions never buy. In return, you gain better annotations and an at-risk analytics dashboard.">
     <h3>“We will lose features our faculty depend on.”</h3>
     <p>The real differences are three New Quizzes question types (covered by HTML5 content) and products most institutions never buy (Mastery Connect, Impact, Portfolium).</p>
     <p>In return you gain visible annotations and an at-risk analytics dashboard at no cost, plus optional add-ons like the white-labeled app and an MCP server.</p>
   </article>
-  <article id="q16-3" data-n="16.3" data-short="“You’re too small”" data-kw="small company vendor risk objection size">
+  <article id="q16-3" data-n="16.3" data-short="“You’re too small”" data-kw="small company vendor risk objection size" data-say="The pack argues the risk is lower: open code, your own data, free export, monthly terms and a money-back guarantee. You also get direct access to the people who build the product.">
     <h3>“You are a small company; that is a risk.”</h3>
     <p>Open code, your data in your hands, free export, monthly terms and a money-back guarantee mean less vendor risk than a multi-year contract. A small team also gives you direct access to the people who build the product.</p>
   </article>
-  <article id="q16-4" data-n="16.4" data-short="“Faculty won’t retrain”" data-kw="retrain retraining faculty training learning curve objection">
+  <article id="q16-4" data-n="16.4" data-short="“Faculty won’t retrain”" data-kw="retrain retraining faculty training learning curve objection" data-say="If you’re coming from Canvas, faculty won’t need to retrain. The interface is the same, and the visible changes fit in a five-minute video.">
     <h3>“Our faculty will not tolerate retraining.”</h3>
     <p>If you use Canvas, they will not need to. The visible changes fit in a five-minute video, and users coming from other systems find it intuitive, often with no training.</p>
   </article>
-  <article id="q16-5" data-n="16.5" data-short="“Migration is disruptive”" data-kw="disruption disruptive migration objection downtime">
+  <article id="q16-5" data-n="16.5" data-short="“Migration is disruptive”" data-kw="disruption disruptive migration objection downtime" data-say="Moves take two to eight weeks and cut over in a semester break, with your old instance kept read-only for a term. The Bible Institute of South Africa moved without disruption.">
     <h3>“Migration will be too disruptive.”</h3>
     <p>Two to eight weeks, cut over in a semester break, with the old instance read-only for a term. The Bible Institute of South Africa moved without disruption to operations.</p>
   </article>
-  <article id="q16-6" data-n="16.6" data-short="“Our vendor will discount”" data-kw="discount incumbent vendor negotiate counter offer objection">
+  <article id="q16-6" data-n="16.6" data-short="“Our vendor will discount”" data-kw="discount incumbent vendor negotiate counter offer objection" data-say="Compare the five-year all-in cost, the tenancy model, the breach-notification clause, who can contact support, and the cost of leaving.">
     <h3>“Our current vendor will discount to keep us.”</h3>
     <p>Compare the five-year all-in cost with add-ons and escalators, the tenancy model, the breach-notification clause, who can contact support, and the cost of leaving. Use the <a class="xref" href="#q4-8">vendor checklist</a> and the <a class="xref" href="#q12-6">cost comparison</a>.</p>
   </article>
-  <article id="q16-7" data-n="16.7" data-short="“We need big-vendor AI”" data-kw="ai features big vendors objection">
+  <article id="q16-7" data-n="16.7" data-short="“We need big-vendor AI”" data-kw="ai features big vendors objection" data-say="Reach AI covers the same ground, and with bring-your-own-key you choose which AI provider handles your data.">
     <h3>“We need the AI features the big vendors are launching.”</h3>
     <p>Reach AI provides the same features, and with bring-your-own-key you choose which AI provider processes your data (<a class="xref" href="#q9-8">see Reach AI</a>).</p>
   </article>
-  <article id="q16-8" data-n="16.8" data-short="“Is this allowed?”" data-kw="allowed legal permitted instructure permission license objection">
+  <article id="q16-8" data-n="16.8" data-short="“Is this allowed?”" data-kw="allowed legal permitted instructure permission license objection" data-say="Yes, it is allowed. Canvas’s AGPLv3 license explicitly lets anyone host, modify and offer it as a service. YouMultiply claims no affiliation with Instructure.">
     <h3>“Is this even allowed? Does Instructure permit it?”</h3>
     <p>Yes. The AGPLv3 explicitly permits anyone to host, modify and offer Canvas as a service. YouMultiply respects Instructure’s trademarks and claims no affiliation.</p>
   </article>
-  <article id="q16-9" data-n="16.9" data-short="“We’re secular”" data-kw="secular non-christian not religious objection">
+  <article id="q16-9" data-n="16.9" data-short="“We’re secular”" data-kw="secular non-christian not religious objection" data-say="Not at all. It runs on the same Canvas used by secular universities around the world. The Christian resources stay switched off if you don’t want them.">
     <h3>“ReachLMS is built for Christian institutions. We are secular.”</h3>
     <p>It runs on the same Canvas used by secular universities worldwide, and works equally well for secular colleges, training providers and K-12 schools. Logos and EVERYWORD stay off for those who do not want them.</p>
   </article>
-  <article id="q16-10" data-n="16.10" data-short="“We’ll build our own with AI”" data-kw="build our own ai coding diy custom lms objection">
+  <article id="q16-10" data-n="16.10" data-short="“We’ll build our own with AI”" data-kw="build our own ai coding diy custom lms objection" data-say="Canvas reflects more than fifteen years of refinement, and the pack cites testing where about 44% of AI coding tasks introduced a security vulnerability. Running your own takes at least one full-time person, and an instance from $7,800 a year costs a fraction of that salary.">
     <h3>“We can use AI to build our own LMS.”</h3>
     <p>Canvas reflects more than fifteen years of refinement. In recent testing, about 44% of AI coding tasks introduced a known security vulnerability (Veracode, 2026 GenAI Code Security Report).</p>
     <p>Your institution stays accountable for security, privacy and accessibility, which takes at least one full-time person. A ReachLMS instance from $7,800 a year costs a fraction of one salary.</p>
   </article>
 </section>
 
-<section data-id="sA" data-n="A" data-label="Price list">
-  <article id="qA-1" data-n="A.1" data-short="Hosting prices" data-kw="price list hosting instance tiers shared self-host cost">
+<section data-id="s17" data-n="17" data-label="Next steps" data-blurb="How to take the next step with the team.">
+  <article id="q17-1" data-n="17.1" data-short="What to do next" data-kw="next steps contact email call talk speak sales team human person demo sandbox assessment get started book" data-say="The best next step is to talk to the team. You can book a call, ask for a free sandbox account loaded with a sample of your own course, or request a free migration assessment. Email education@youmultiply.com.">
+    <h3>What can we do next?</h3>
+    <ul>
+      <li>Book a call with the YouMultiply team.</li>
+      <li>Ask for a free ReachLMS sandbox account loaded with a sample of your own exported course.</li>
+      <li>Request a free migration assessment against your current instance.</li>
+    </ul>
+    <p>Contact: education@youmultiply.com · reachlms.com · youmultiply.com · 8 The Green, Suite R, Dover, DE 19901.</p>
+  </article>
+</section>
+
+<section data-id="sA" data-n="A" data-label="Price list" data-blurb="The full ReachLMS price list.">
+  <article id="qA-1" data-n="A.1" data-short="Hosting prices" data-kw="price list hosting instance tiers shared self-host cost" data-say="Here are the hosting prices from the price list.">
     <h3>Price list: hosting</h3>
     <div class="tbl mid"><table>
       <thead><tr><th>Item</th><th class="num">One-time</th><th>Recurring</th></tr></thead>
@@ -1118,7 +1128,7 @@ tbody th { font-weight: 600; }
       </tbody>
     </table></div>
   </article>
-  <article id="qA-2" data-n="A.2" data-short="Implementation and support prices" data-kw="price list implementation support hourly rate">
+  <article id="qA-2" data-n="A.2" data-short="Implementation and support prices" data-kw="price list implementation support hourly rate" data-say="Here are the implementation and support prices from the price list.">
     <h3>Price list: implementation and support</h3>
     <div class="tbl mid"><table>
       <thead><tr><th>Item</th><th class="num">Price</th><th>Includes</th></tr></thead>
@@ -1132,7 +1142,7 @@ tbody th { font-weight: 600; }
       </tbody>
     </table></div>
   </article>
-  <article id="qA-3" data-n="A.3" data-short="Add-on prices and terms" data-kw="price list add-ons app ecommerce video ai mcp backup terms">
+  <article id="qA-3" data-n="A.3" data-short="Add-on prices and terms" data-kw="price list add-ons app ecommerce video ai mcp backup terms" data-say="Here are the add-on prices and the standard contract terms.">
     <h3>Price list: add-ons and terms</h3>
     <div class="tbl mid"><table>
       <thead><tr><th>Item</th><th class="num">One-time</th><th>Recurring</th></tr></thead>
@@ -1151,8 +1161,8 @@ tbody th { font-weight: 600; }
   </article>
 </section>
 
-<section data-id="sB" data-n="B" data-label="Canvas price record">
-  <article id="qB-1" data-n="B.1" data-short="Canvas per-FTE pricing" data-kw="canvas price instructure fte public record texas a&amp;m enterprise cost comparison">
+<section data-id="sB" data-n="B" data-label="Canvas price record" data-blurb="Public-record enterprise Canvas pricing for comparison.">
+  <article id="qB-1" data-n="B.1" data-short="Canvas per-FTE pricing" data-kw="canvas price instructure fte public record texas a&amp;m enterprise cost comparison" data-say="For comparison, here’s public-record enterprise Canvas pricing per FTE, from a Texas A&amp;M University System contract.">
     <h3>Public-record enterprise Canvas pricing per FTE</h3>
     <p class="note">From Amendment No. 2 to the agreement between The Texas A&amp;M University System and Instructure, Inc. (public record).</p>
     <div class="tbl"><table>
@@ -1169,7 +1179,7 @@ tbody th { font-weight: 600; }
       </tbody>
     </table></div>
   </article>
-  <article id="qB-2" data-n="B.2" data-short="Canvas contract terms" data-kw="canvas contract terms years escalation storage included">
+  <article id="qB-2" data-n="B.2" data-short="Canvas contract terms" data-kw="canvas contract terms years escalation storage included" data-say="Here are the contract terms and inclusions from that public-record Canvas contract.">
     <h3>Canvas contract terms and inclusions</h3>
     <ul>
       <li><strong>Term:</strong> minimum 3 years, maximum 5; annual escalation up to 3%.</li>
@@ -1178,7 +1188,7 @@ tbody th { font-weight: 600; }
       <li><strong>Custom domain:</strong> institution provides the SSL certificate.</li>
     </ul>
   </article>
-  <article id="qB-3" data-n="B.3" data-short="Canvas add-on prices" data-kw="canvas add-ons studio catalog portfolium impact training support price">
+  <article id="qB-3" data-n="B.3" data-short="Canvas add-on prices" data-kw="canvas add-ons studio catalog portfolium impact training support price" data-say="Here’s what that Canvas contract charges separately.">
     <h3>Canvas separately priced items</h3>
     <div class="tbl mid"><table>
       <tbody>
@@ -1198,65 +1208,40 @@ tbody th { font-weight: 600; }
 
 </div>
 
-<footer class="foot" id="next-steps">
-  <div class="wrap">
-    <div>
-      <div class="eyebrow">Next steps</div>
-      <h2>See ReachLMS with <em>your own courses.</em></h2>
-      <ul class="steps">
-        <li>Book a call with the YouMultiply team.</li>
-        <li>Ask for a free sandbox account loaded with a sample of your own exported course.</li>
-        <li>Request a free migration assessment against your current instance.</li>
-      </ul>
-      <p class="fine">Prices and features may change. Please confirm current offerings with YouMultiply before you decide.</p>
-    </div>
-    <div class="contact">
-      <img src="reachlms-logo.svg" alt="YouMultiply Ecosystem" width="184" height="38">
-      <span class="lbl">Contact</span>
-      <span><span id="email">education@youmultiply.com</span><button class="copy" type="button" id="copy">Copy</button></span>
-      <span>reachlms.com · youmultiply.com</span>
-      <span>8 The Green, Suite R, Dover, DE 19901</span>
-    </div>
-  </div>
-</footer>
-
 <script>
 (function () {
   /* ---------- Content model ---------- */
   const store = document.getElementById('store');
-  const sections = [...store.querySelectorAll('section')].map(s => ({
-    id: s.dataset.id, n: s.dataset.n, label: s.dataset.label, cards: []
-  }));
+  const secEls = [...store.querySelectorAll('section')];
+  const sections = secEls.map(s => ({ id: s.dataset.id, n: s.dataset.n, label: s.dataset.label, blurb: s.dataset.blurb || '', cards: [] }));
   const cards = [];
   function spaced(node) { const t = node.cloneNode(true); t.querySelectorAll('th,td,li,p').forEach(n => n.append(' ')); return t.textContent.replace(/\s+/g, ' ').trim(); }
   const secName = s => (s.n !== '★' ? (/^[AB]$/.test(s.n) ? 'Appendix ' : 'Section ') + s.n + ' · ' : '') + s.label;
-  [...store.querySelectorAll('section')].forEach((s, si) => {
+  secEls.forEach((s, si) => {
     s.querySelectorAll('article').forEach(a => {
-      const h = a.querySelector('h3');
       const body = a.cloneNode(true); body.querySelector('h3').remove();
       const c = {
-        id: a.id, n: a.dataset.n, short: a.dataset.short, kw: a.dataset.kw || '',
-        title: h.textContent.trim(), html: body.innerHTML, text: spaced(body),
-        sec: sections[si], index: cards.length
+        id: a.id, n: a.dataset.n, short: a.dataset.short, kw: a.dataset.kw || '', say: a.dataset.say || '',
+        title: a.querySelector('h3').textContent.trim(), html: body.innerHTML, text: spaced(body),
+        sec: sections[si], index: cards.length, posInSec: sections[si].cards.length
       };
-      c.posInSec = sections[si].cards.length;
       sections[si].cards.push(c); cards.push(c);
     });
   });
   const byId = new Map(cards.map(c => [c.id, c]));
   sections.forEach(s => byId.set(s.id, s.cards[0]));
 
-  /* ---------- Search engine: question-aware, ranked ---------- */
-  const STOP = new Set('a an the and or but if of to in on at by for with from as is are was were be been being do does did doing have has had having i we our ours us you your yours it its this that these those there their them they what which whom whose why how can could would should will shall may might must about into over under any some all each more most other such no nor not only own same so than too very just get got me my also please tell know want need like using use used still yes'.split(' '));
+  /* ---------- Matching engine: maps a question to passages in the pack ---------- */
+  const STOP = new Set('a an the and or but if of to in on at by for with from as is are was were be been being do does did doing have has had having i we our ours us you your yours it its this that these those there their them they what which whom whose why how can could would should will shall may might must about into over under any some all each more most other such no nor not only own same so than too very just get got me my also please tell know want need like using use used still yes ok okay hi hello hey thanks thank offer offers offered provide provides provided include includes until before after when then really actually let lets gonna wanna going'.split(' '));
   const GROUPS = [
-    ['price','cost','costs','costing','pricing','priced','prices','fee','fees','pay','paying','paid','payment','charge','charges','charged','expensive','cheap','cheaper','afford','affordable','budget','much','dollar','dollars','money','spend','spending','tco','subscription','invoice'],
+    ['price','cost','costs','costing','pricing','priced','prices','fee','fees','pay','paying','paid','payment','charge','charges','charged','expensive','cheap','cheaper','cheapest','afford','affordable','budget','much','dollar','dollars','money','spend','spending','tco','subscription','invoice'],
     ['secure','security','secured','safe','safety','breach','breaches','hack','hacked','hacker','attack','attacks','vulnerability','vulnerabilities','protect','protected','protection','encrypt','encrypted','encryption','threat','threats','risky'],
     ['migrate','migration','migrations','migrating','migrated','move','moving','moved','switch','switching','transfer','transferring','import','importing','cutover','transition','convert'],
-    ['exit','leave','leaving','cancel','cancellation','cancelling','terminate','termination','lockin','lock','locked','quit','stop'],
+    ['exit','leave','leaving','cancel','cancellation','cancelling','terminate','termination','lockin','lock','locked','quit'],
     ['privacy','private','gdpr','ferpa','popia','personal','compliance','compliant','regulation','regulations','law','laws'],
     ['mobile','app','apps','phone','phones','ios','android','iphone','offline','tablet','smartphone'],
     ['ai','artificial','intelligence','chatgpt','llm','gpt','openai','anthropic','claude','gemini','copilot','mcp'],
-    ['support','help','helpdesk','assistance','assist','whatsapp','contact','service'],
+    ['support','help','helpdesk','assistance','assist','service'],
     ['training','train','trained','retrain','retraining','onboarding','learning','curve','teach'],
     ['uptime','reliable','reliability','downtime','outage','outages','availability','available','down','sla'],
     ['backup','backups','restore','recovery','recover','disaster','snapshot'],
@@ -1277,8 +1262,12 @@ tbody th { font-weight: 600; }
     ['data','record','records','information','database'],
     ['report','reports','reporting','analytics','dashboard','insights'],
     ['canvas','instructure'],
-    ['refund','guarantee','money-back','trial','pilot','demo','sandbox','try'],
-    ['accessible','accessibility','wcag','vpat','disability','disabilities']
+    ['refund','refunds','refunded','guarantee','money-back'],
+    ['trial','trials','pilot','demo','sandbox','try'],
+    ['accessible','accessibility','wcag','vpat','disability','disabilities'],
+    ['certificate','certificates','certificated'],
+    ['certification','certifications','certified','accreditation'],
+    ['contact','email','call','talk','speak','sales','human','person','someone','reach','team']
   ];
   function stem(w) {
     w = w.toLowerCase().replace(/[’']s$/, '');
@@ -1292,20 +1281,16 @@ tbody th { font-weight: 600; }
   }
   const CANON = new Map();
   GROUPS.forEach(g => { const c = '#' + stem(g[0]); g.forEach(w => CANON.set(stem(w), c)); });
-  function terms(str, keepStop) {
+  function terms(str) {
     return (str.toLowerCase().replace(/[“”"()\[\],.?!:;/]/g, ' ').match(/[a-z0-9$&+-]+/g) || [])
       .map(w => w.replace(/^-+|-+$/g, ''))
-      .filter(w => w && (keepStop || !STOP.has(w)))
+      .filter(w => w && !STOP.has(w))
       .map(w => { const s = stem(w); return CANON.get(s) || s; });
   }
-  // Field-weighted term frequencies
   const docs = cards.map(c => {
     const tf = new Map(); let len = 0;
     const add = (txt, wgt) => terms(txt).forEach(t => { tf.set(t, (tf.get(t) || 0) + wgt); len += wgt; });
-    add(c.title + ' ' + c.short, 3);
-    add(c.kw, 3);
-    add(c.sec.label, 1.5);
-    add(c.text, 1);
+    add(c.title + ' ' + c.short, 3); add(c.kw, 3); add(c.sec.label, 1.5); add(c.text, 1);
     return { c, tf, len };
   });
   const avgLen = docs.reduce((a, d) => a + d.len, 0) / docs.length;
@@ -1313,17 +1298,17 @@ tbody th { font-weight: 600; }
   docs.forEach(d => d.tf.forEach((_, t) => df.set(t, (df.get(t) || 0) + 1)));
   const vocab = [...df.keys()];
   const idf = t => Math.log(1 + (docs.length - (df.get(t) || 0) + 0.5) / ((df.get(t) || 0) + 0.5));
-
-  function search(query) {
-    let qt = [...new Set(terms(query))];
-    // Intent phrases that stopwords would otherwise swallow
+  function queryTerms(query) {
+    const qt = terms(query);
     const ql = query.toLowerCase();
     if (/how much|what.*cost|\bcosts?\b/.test(ql)) qt.push('#pric');
     if (/how long|how soon|how quick/.test(ql)) qt.push('#long');
     if (/\bwhere\b/.test(ql)) qt.push('#host');
-    qt = [...new Set(qt)];
+    return [...new Set(qt)];
+  }
+  function search(query) {
+    const qt = queryTerms(query);
     if (!qt.length) return { results: [], qt };
-    // Expand each query term to partial vocabulary matches for typos and word forms
     const expanded = qt.map(t => {
       const m = [[t, 1]];
       if (!t.startsWith('#') && t.length >= 4) vocab.forEach(v => { if (v !== t && !v.startsWith('#') && (v.startsWith(t) || (t.startsWith(v) && v.length >= 4))) m.push([v, 0.6]); });
@@ -1343,201 +1328,253 @@ tbody th { font-weight: 600; }
         score += best;
       });
       score *= 0.4 + 0.6 * (hit / expanded.length);
-      return { c: d.c, score };
+      return { c: d.c, score, cover: hit / expanded.length };
     }).filter(r => r.score > 0.4).sort((a, b) => b.score - a.score);
-    return { results: scored.slice(0, 7), qt };
+    return { results: scored.slice(0, 6), qt };
   }
 
-  // Words in text whose stem/canonical matches the query terms, for highlighting
-  function markRegex(qt) {
-    const set = new Set(qt);
-    const words = new Set();
-    [...cards.map(c => c.title + ' ' + c.text)].join(' ').toLowerCase().match(/[a-z0-9$-]+/g).forEach(w => {
-      if (w.length < 3 || STOP.has(w) || /^(much|long|where|take|takes|time)$/.test(w)) return;
-      const s = stem(w); const t = CANON.get(s) || s;
-      if (set.has(t) || [...set].some(q => !q.startsWith('#') && q.length >= 4 && s.startsWith(q))) words.add(w);
+  /* ---------- Chat ---------- */
+  const log = document.getElementById('log');
+  const input = document.getElementById('ask');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let lastCard = null;
+  const BOT_ICON = '<span class="avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#E8C77E" stroke-width="2.4" stroke-linecap="round"><path d="M4 6l16 12M20 6L4 18"/></svg></span>';
+  const OPENERS = ['', 'Good question. ', 'Sure. ', 'Happy to help. ', ''];
+  const STARTERS = ['How much does it cost?', 'Is our data secure?', 'How long does migration take?', 'Can students contact support?', 'Is there a mobile app?', 'What if you go out of business?'];
+
+  function scrollDown() { log.scrollTop = log.scrollHeight; }
+  function addUser(text) {
+    const m = document.createElement('div'); m.className = 'msg me';
+    const b = document.createElement('div'); b.className = 'bubble'; b.textContent = text;
+    m.appendChild(b); log.appendChild(m); scrollDown();
+  }
+  function addBot() {
+    const m = document.createElement('div'); m.className = 'msg bot';
+    m.innerHTML = BOT_ICON + '<div class="bubble"><span class="typing" aria-label="Typing"><i></i><i></i><i></i></span></div>';
+    log.appendChild(m); scrollDown();
+    return m.querySelector('.bubble');
+  }
+  function stream(el, text, done) {
+    if (reduce) { el.textContent = text; done(); return; }
+    const words = text.split(' '); let i = 0;
+    const tick = () => {
+      i = Math.min(words.length, i + 2);
+      el.textContent = words.slice(0, i).join(' ');
+      scrollDown();
+      if (i < words.length) setTimeout(tick, 28); else done();
+    };
+    tick();
+  }
+  function chipRow(list, hint) {
+    const wrap = document.createElement('div'); wrap.className = 'follow';
+    if (hint) { const h = document.createElement('div'); h.className = 'hint'; h.textContent = hint; wrap.appendChild(h); }
+    const row = document.createElement('div'); row.className = 'chips';
+    list.forEach(item => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip' + (item.gold ? ' gold' : '');
+      b.textContent = item.label; b.addEventListener('click', () => ask(item.q || item.label));
+      row.appendChild(b);
     });
-    if (!words.size) return null;
-    const list = [...words].sort((a, b) => b.length - a.length).map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-    return new RegExp('\\b(' + list.join('|') + ')\\b', 'gi');
+    wrap.appendChild(row); log.appendChild(wrap); scrollDown();
   }
-  function highlight(el, re) {
-    if (!re) return;
-    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-    const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
-    nodes.forEach(node => {
-      const text = node.nodeValue; re.lastIndex = 0;
-      if (!re.test(text)) return; re.lastIndex = 0;
-      const frag = document.createDocumentFragment(); let last = 0, m;
-      while ((m = re.exec(text))) {
-        if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
-        const mk = document.createElement('mark'); mk.textContent = m[0]; frag.appendChild(mk);
-        last = m.index + m[0].length;
-      }
-      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
-      node.parentNode.replaceChild(frag, node);
+  function reply(text, after) {
+    const bubble = addBot();
+    setTimeout(() => {
+      bubble.innerHTML = '<p></p>';
+      stream(bubble.querySelector('p'), text, () => { if (after) after(bubble); scrollDown(); });
+    }, reduce ? 0 : 420 + Math.min(500, text.length * 2));
+  }
+  function answerCard(c, opener, alsoList) {
+    lastCard = c;
+    reply(lead(opener, c.say) + c.say, bubble => {
+      const det = document.createElement('details'); det.className = 'more';
+      det.innerHTML = '<summary>Show the full detail</summary><div class="inner"></div>';
+      det.querySelector('.inner').innerHTML = c.html;
+      det.addEventListener('toggle', () => { if (det.open) setTimeout(scrollDown, 30); });
+      bubble.appendChild(det);
+      const src = document.createElement('div'); src.className = 'src';
+      src.innerHTML = '<span class="lbl">Source:</span>';
+      const l = document.createElement('button'); l.type = 'button'; l.className = 'link';
+      l.textContent = (c.n ? c.n + ' · ' : '') + c.title;
+      l.addEventListener('click', () => openReader(c.id));
+      src.appendChild(l); bubble.appendChild(src);
+      const rate = document.createElement('div'); rate.className = 'rate';
+      rate.innerHTML = '<span>Helpful?</span><button type="button">Yes</button><button type="button">Not quite</button>';
+      const [yes, no] = rate.querySelectorAll('button');
+      yes.addEventListener('click', () => { rate.innerHTML = '<span>Great, glad that helped.</span>'; });
+      no.addEventListener('click', () => { rate.innerHTML = '<span>Thanks for saying so. Try asking another way, or email education@youmultiply.com.</span>'; });
+      bubble.appendChild(rate);
+      const follow = (alsoList && alsoList.length ? alsoList : related(c)).slice(0, 3);
+      if (follow.length) chipRow(follow.map(x => ({ label: x.short, q: '#' + x.id })), 'You might also ask');
     });
   }
-  function snippet(c, re) {
-    const sentences = c.text.match(/[^.!?]+[.!?]?/g) || [c.text];
-    let best = sentences[0], bestHits = -1;
-    if (re) sentences.forEach(s => { re.lastIndex = 0; const h = (s.match(re) || []).length; if (h > bestHits) { bestHits = h; best = s; } });
-    best = best.trim();
-    return best.length > 190 ? best.slice(0, 187).replace(/\s\S*$/, '') + '…' : best;
+  function related(c) {
+    const same = c.sec.cards.filter(x => x !== c);
+    const after = same.filter(x => x.posInSec > c.posInSec);
+    return after.concat(same.filter(x => x.posInSec < c.posInSec));
   }
 
-  /* ---------- Search UI ---------- */
-  const q = document.getElementById('q');
-  const results = document.getElementById('results');
-  const clearBtn = document.getElementById('clear');
-  let current = [], sel = 0, lastRe = null, lastQ = '';
-
-  function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-  function renderResults() {
-    const raw = q.value.trim();
-    clearBtn.hidden = !raw;
-    if (!raw) { closeResults(); return; }
-    const { results: r, qt } = search(raw);
-    current = r; sel = 0; lastRe = markRegex(qt); lastQ = raw;
-    if (!r.length) {
-      results.innerHTML = '<div class="noresult"><b>No close match.</b> Try different words, for example “pricing”, “backups”, “single sign-on” or “cancel the contract”.</div>';
-    } else {
-      results.innerHTML = '<div class="hint">' + (r.length === 1 ? 'Best answer' : 'Best answers for your question') + '</div>' + r.map((x, i) => {
-        const sn = document.createElement('span'); sn.className = 'snip'; sn.textContent = snippet(x.c, lastRe); highlight(sn, lastRe);
-        const tt = document.createElement('span'); tt.className = 'ttl'; tt.textContent = x.c.title; highlight(tt, lastRe);
-        return '<button type="button" class="res" role="option" id="res-' + i + '" data-id="' + x.c.id + '" aria-selected="' + (i === 0) + '">' +
-          '<span class="where">' + (i === 0 ? '<span class="best">Best match</span>' : '') + esc(secName(x.c.sec)) + '</span>' +
-          tt.outerHTML + sn.outerHTML + '</button>';
-      }).join('');
+  function ask(raw) {
+    const text = raw.trim(); if (!text) return;
+    // Chips pass a card id directly
+    if (text.startsWith('#') && byId.has(text.slice(1))) {
+      const c = byId.get(text.slice(1));
+      addUser(c.title); answerCard(c, pick()); return;
     }
-    results.hidden = false; q.setAttribute('aria-expanded', 'true');
+    addUser(text);
+    const t = text.toLowerCase().replace(/[!?.]+$/, '').trim();
+    const words = t.split(/\s+/);
+
+    if (/^(hi|hello|hey|hiya|howdy|good (morning|afternoon|evening))\b/.test(t) && words.length <= 4) {
+      reply('Hello! I can answer questions about ReachLMS using the due diligence pack. What would you like to know?', () => chipRow(STARTERS.slice(0, 4).map(s => ({ label: s }))));
+      return;
+    }
+    if (/\b(thanks|thank you|cheers|great|perfect|awesome)\b/.test(t) && words.length <= 5) {
+      reply('You’re welcome. Ask me anything else about ReachLMS whenever you like.', () => chipRow([{ label: 'Surprise me', q: '__surprise' }].concat(STARTERS.slice(3, 5).map(s => ({ label: s })))));
+      return;
+    }
+    if (/who are you|what are you|are you (a )?(bot|human|real|ai)|how do you work/.test(t)) {
+      reply('I’m the ReachLMS guide. I match your question to the relevant part of the ReachLMS due diligence pack and explain it in plain words. If the pack doesn’t cover something, I’ll tell you instead of guessing.');
+      return;
+    }
+    if (/^(tell me )?more\b|^go on\b|^continue\b|^next\b|^and\??$|^what else/.test(t) && lastCard) {
+      const nxt = related(lastCard)[0];
+      if (nxt) { reply('Here’s more on ' + lastCard.sec.label.replace(/&amp;/g, '&') + '.', () => answerCard(nxt, '')); return; }
+    }
+    // Short follow-ups lean on the last answer ("how much is it?", "and for students?")
+    let query = text;
+    const qts = queryTerms(text);
+    const alone = search(text).results[0];
+    const clear = alone && alone.cover === 1 && alone.score >= 2.5;
+    if (lastCard && !clear && words.length <= 5 && (/\b(it|that|this|those|they|them|its|there)\b/.test(t) || qts.length <= 1)) {
+      query = text + ' ' + lastCard.short;
+    }
+    // A headcount in the question points to tier sizing
+    const big = (t.replace(/,/g, '').match(/\b\d{3,6}\b/g) || []).some(n => +n >= 200);
+    if (big && /student|user|learner|people|staff|cost|price|pay|tier|size/.test(t)) query += ' tiers capacity how many students tier size';
+    const { results } = search(query);
+    const top = results[0];
+    // Words the pack never uses at all
+    const unknown = (text.toLowerCase().match(/[a-z0-9-]+/g) || []).filter(w => {
+      if (w.length < 4 || STOP.has(w) || /\d/.test(w)) return false;
+      const s = stem(w); const k = CANON.get(s) || s;
+      if (k.startsWith('#') || df.has(k)) return false;
+      return !vocab.some(v => !v.startsWith('#') && v.startsWith(k));
+    });
+    if (unknown.length && top && top.cover < 1) {
+      reply('The due diligence pack doesn’t mention “' + unknown.join('”, “') + '”, so I can’t answer that part. The closest topic it covers is “' + top.c.title + '”.', () => {
+        chipRow(results.slice(0, 3).map(r => ({ label: r.c.short, q: '#' + r.c.id })), 'Open the closest topics');
+      });
+      return;
+    }
+    if (!top || top.score < 1.1) {
+      reply('I couldn’t find that in the due diligence pack, so I won’t guess. Try asking another way, browse the topics below, or email the team at education@youmultiply.com.', () => {
+        if (top) chipRow(results.slice(0, 3).map(r => ({ label: r.c.short, q: '#' + r.c.id })), 'Closest topics in the pack');
+        else chipRow(STARTERS.slice(0, 3).map(s => ({ label: s })), 'Popular questions');
+      });
+      return;
+    }
+    const others = results.slice(1).filter(r => r.score > top.score * 0.55).map(r => r.c);
+    const opener = top.cover < 0.6 ? 'Here’s the closest answer I found in the pack. ' : pick();
+    answerCard(top.c, opener, others);
   }
-  function closeResults() { results.hidden = true; q.setAttribute('aria-expanded', 'false'); }
-  function moveSel(d) {
-    if (!current.length) return;
-    sel = (sel + d + current.length) % current.length;
-    results.querySelectorAll('.res').forEach((b, i) => b.setAttribute('aria-selected', String(i === sel)));
-    const el = document.getElementById('res-' + sel); if (el) el.scrollIntoView({ block: 'nearest' });
-  }
-  let timer;
-  q.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(renderResults, 90); });
-  q.addEventListener('focus', () => { if (q.value.trim()) renderResults(); });
-  q.addEventListener('keydown', e => {
-    if (e.key === 'ArrowDown') { e.preventDefault(); moveSel(1); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); moveSel(-1); }
-    else if (e.key === 'Enter') { e.preventDefault(); choose(); }
-    else if (e.key === 'Escape') { if (!results.hidden) closeResults(); else { q.value = ''; clearBtn.hidden = true; } }
+  function pick() { return OPENERS[Math.floor(Math.random() * OPENERS.length)]; }
+  function lead(opener, say) { return /^(Yes|No|Not|Good|Here|Sure|Happy|In short|Quite|Easy|Exactly|Very|Either|Less|Because|For|You)\b/.test(say) && !/closest/.test(opener) ? '' : opener; }
+
+  document.getElementById('composer').addEventListener('submit', e => {
+    e.preventDefault();
+    const v = input.value; input.value = '';
+    if (v.trim() === '__surprise') surprise(); else ask(v);
   });
-  function choose() {
-    clearTimeout(timer); if (q.value.trim() !== lastQ || results.hidden) renderResults();
-    if (current[sel]) { open(current[sel].c.id, { re: lastRe, scroll: true }); closeResults(); q.blur(); }
+  function surprise() {
+    const pool = cards.filter(c => c !== lastCard && !/^q[AB]/.test(c.id));
+    const c = pool[Math.floor(Math.random() * pool.length)];
+    addUser('Surprise me!');
+    answerCard(c, 'Here’s something from ' + c.sec.label.replace(/&amp;/g, '&') + '. ');
   }
-  document.getElementById('search-form').addEventListener('submit', e => { e.preventDefault(); choose(); });
-  results.addEventListener('mousedown', e => e.preventDefault());
-  results.addEventListener('click', e => {
-    const b = e.target.closest('.res'); if (!b) return;
-    open(b.dataset.id, { re: lastRe, scroll: true }); closeResults(); q.blur();
-  });
-  document.addEventListener('click', e => { if (!e.target.closest('.search')) closeResults(); });
-  clearBtn.addEventListener('click', () => { q.value = ''; clearBtn.hidden = true; closeResults(); q.focus(); });
+  document.getElementById('surprise').addEventListener('click', surprise);
+  // Chip "Surprise me" uses a sentinel
+  const _ask = ask;
+  ask = function (q) { if (q === '__surprise') surprise(); else _ask(q); };
 
-  document.querySelectorAll('.ask').forEach(btn => btn.addEventListener('click', () => {
-    q.value = btn.textContent.trim(); q.focus(); renderResults();
-  }));
-  document.querySelectorAll('[data-open]').forEach(btn => btn.addEventListener('click', () => open(btn.dataset.open, { scroll: true })));
+  // Opening state
+  const hello = document.createElement('div'); hello.className = 'msg bot';
+  hello.innerHTML = BOT_ICON + '<div class="bubble"><p>Hi! I’m the ReachLMS guide. Ask me about pricing, security, migration, support or anything else in the due diligence pack, and I’ll explain it in plain words.</p></div>';
+  log.appendChild(hello);
+  chipRow(STARTERS.map((s, i) => ({ label: s, gold: i === 0 })));
 
-  /* ---------- Reader ---------- */
-  const rail = document.getElementById('rail');
-  const picker = document.getElementById('picker');
-  const stage = document.getElementById('stage');
-  const el = id => document.getElementById(id);
-  let idx = 0;
-
+  /* ---------- Topic tiles ---------- */
+  const grid = document.getElementById('grid');
   sections.forEach(s => {
-    const li = document.createElement('li'); li.dataset.sec = s.id;
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'sec-btn';
-    b.innerHTML = '<span class="n"></span><span class="t"></span><span class="c"></span>';
-    b.querySelector('.n').textContent = s.n; b.querySelector('.t').textContent = s.label; b.querySelector('.c').textContent = s.cards.length;
-    b.addEventListener('click', () => open(s.cards[0].id));
-    li.appendChild(b);
-    const ol = document.createElement('ol'); ol.className = 'cards'; ol.hidden = true;
-    s.cards.forEach(c => {
-      const li2 = document.createElement('li'); const cb = document.createElement('button');
-      cb.type = 'button'; cb.textContent = c.short; cb.dataset.id = c.id;
-      cb.addEventListener('click', () => open(c.id));
-      li2.appendChild(cb); ol.appendChild(li2);
+    const t = document.createElement('div'); t.className = 'tile';
+    const top = document.createElement('div'); top.className = 'tile-top';
+    const h = document.createElement('h3'); h.innerHTML = s.label;
+    const n = document.createElement('span'); n.className = 'n'; n.textContent = s.n === '★' ? '' : (/^[AB]$/.test(s.n) ? 'Appendix ' : '') + s.n;
+    top.append(h, n); t.appendChild(top);
+    if (s.blurb) { const p = document.createElement('p'); p.textContent = s.blurb; t.appendChild(p); }
+    const ul = document.createElement('ul');
+    s.cards.slice(0, 3).forEach(c => {
+      const li = document.createElement('li'); const b = document.createElement('button'); b.type = 'button';
+      b.textContent = c.short; b.addEventListener('click', () => openReader(c.id)); li.appendChild(b); ul.appendChild(li);
     });
-    li.appendChild(ol); rail.appendChild(li);
-
-    const og = document.createElement('optgroup'); og.label = (s.n !== '★' ? s.n + ' · ' : '') + s.label;
-    s.cards.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.short; og.appendChild(o); });
-    picker.appendChild(og);
+    t.appendChild(ul);
+    const all = document.createElement('button'); all.type = 'button'; all.className = 'all';
+    all.textContent = s.cards.length > 3 ? 'See all ' + s.cards.length + ' →' : 'Read →';
+    all.addEventListener('click', () => openReader(s.cards[0].id));
+    t.appendChild(all);
+    grid.appendChild(t);
   });
-  picker.addEventListener('change', () => open(picker.value));
 
-  function open(id, opts) {
-    opts = opts || {};
+  /* ---------- Reader sheet ---------- */
+  const dlg = document.getElementById('reader');
+  const $ = id => document.getElementById(id);
+  let rIdx = 0;
+  function openReader(id) {
     const c = byId.get(id); if (!c) return;
-    idx = c.index;
-    const s = c.sec;
-    el('crumb').textContent = secName(s);
-    el('count').textContent = (c.posInSec + 1) + ' of ' + s.cards.length;
-    el('progress').innerHTML = s.cards.map((_, i) => '<span class="' + (i <= c.posInSec ? 'done' : '') + '"></span>').join('');
-    const t = el('card-title'); t.textContent = '';
-    if (c.n) { const qn = document.createElement('span'); qn.className = 'qn'; qn.textContent = c.n; t.appendChild(qn); }
-    t.appendChild(document.createTextNode(c.title));
-    const body = el('card-body'); body.innerHTML = c.html;
-    if (opts.re) { highlight(t, opts.re); highlight(body, opts.re); }
-    const card = el('card'); card.style.animation = 'none'; void card.offsetWidth; card.style.animation = '';
-
-    const prev = cards[idx - 1], next = cards[idx + 1];
-    el('prev').disabled = !prev; el('next').disabled = !next;
-    el('prev-lab').textContent = prev ? (prev.sec !== s ? 'Back to ' + prev.sec.label : prev.short) : 'Start of guide';
-    el('next-lab').textContent = next ? (next.sec !== s ? 'Next topic: ' + next.sec.label : next.short) : 'End of guide';
-
-    rail.querySelectorAll(':scope > li').forEach(li => {
-      const on = li.dataset.sec === s.id;
-      li.classList.toggle('on', on); li.querySelector('.cards').hidden = !on;
-      li.querySelectorAll('.cards button').forEach(b => b.setAttribute('aria-current', String(b.dataset.id === c.id)));
-    });
-    picker.value = c.id;
-    try { history.replaceState(null, '', '#' + c.id); } catch (_) {}
-    if (opts.scroll) {
-      const r = stage.getBoundingClientRect();
-      if (r.top < 80 || r.top > window.innerHeight * 0.5) stage.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-    }
+    rIdx = c.index; const s = c.sec;
+    $('r-crumb').innerHTML = secName(s);
+    $('r-count').textContent = 'Answer ' + (c.posInSec + 1) + ' of ' + s.cards.length;
+    $('r-progress').innerHTML = s.cards.map((_, i) => '<span class="' + (i <= c.posInSec ? 'done' : '') + '"></span>').join('');
+    const title = $('r-title'); title.textContent = '';
+    if (c.n) { const q = document.createElement('span'); q.className = 'qn'; q.textContent = c.n; title.appendChild(q); }
+    title.appendChild(document.createTextNode(c.title));
+    $('r-content').innerHTML = c.html;
+    $('r-body').scrollTop = 0;
+    const prev = cards[rIdx - 1], next = cards[rIdx + 1];
+    $('r-prev').disabled = !prev; $('r-next').disabled = !next;
+    $('r-prev-lab').textContent = prev ? (prev.sec !== s ? prev.sec.label.replace(/&amp;/g, '&') : prev.short) : 'Start';
+    $('r-next-lab').textContent = next ? (next.sec !== s ? 'Next topic: ' + next.sec.label.replace(/&amp;/g, '&') : next.short) : 'End';
+    if (!dlg.open) { try { dlg.showModal(); } catch (_) { dlg.setAttribute('open', ''); } }
   }
-  function step(d) {
-    const n = cards[idx + d]; if (!n) return;
-    open(n.id);
-    const r = stage.getBoundingClientRect();
-    if (r.top < 70) stage.scrollIntoView({ block: 'start' });
-  }
-  el('prev').addEventListener('click', () => step(-1));
-  el('next').addEventListener('click', () => step(1));
-  document.addEventListener('keydown', e => {
-    const tag = (document.activeElement && document.activeElement.tagName) || '';
-    if (/INPUT|SELECT|TEXTAREA/.test(tag)) return;
-    if (e.key === '/') { e.preventDefault(); q.focus(); }
-    else if (e.key === 'ArrowRight') step(1);
-    else if (e.key === 'ArrowLeft') step(-1);
+  $('r-prev').addEventListener('click', () => { const p = cards[rIdx - 1]; if (p) openReader(p.id); });
+  $('r-next').addEventListener('click', () => { const n = cards[rIdx + 1]; if (n) openReader(n.id); });
+  $('r-close').addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') $('r-next').click();
+    else if (e.key === 'ArrowLeft') $('r-prev').click();
   });
-  // Cross-references inside answers open the referenced card
-  el('card-body').addEventListener('click', e => {
+  $('r-ask').addEventListener('click', () => {
+    const c = cards[rIdx]; dlg.close();
+    document.querySelector('.chat').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    ask('#' + c.id);
+  });
+  $('r-content').addEventListener('click', e => {
     const a = e.target.closest('a[href^="#"]'); if (!a) return;
     const id = a.getAttribute('href').slice(1);
-    if (byId.has(id)) { e.preventDefault(); open(id, { scroll: true }); }
+    if (byId.has(id)) { e.preventDefault(); openReader(id); }
+  });
+  log.addEventListener('click', e => {
+    const a = e.target.closest('a[href^="#"]'); if (!a) return;
+    const id = a.getAttribute('href').slice(1);
+    if (byId.has(id)) { e.preventDefault(); openReader(id); }
   });
 
-  el('copy').addEventListener('click', e => {
-    const btn = e.currentTarget, txt = el('email').textContent;
+  $('copy').addEventListener('click', e => {
+    const btn = e.currentTarget, txt = $('email').textContent;
     const done = () => { btn.textContent = 'Copied'; setTimeout(() => btn.textContent = 'Copy', 1600); };
-    const fallback = () => { const r = document.createRange(); r.selectNodeContents(el('email')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selected'; };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents($('email')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selected'; };
     try { navigator.clipboard.writeText(txt).then(done, fallback); } catch (_) { fallback(); }
   });
-
-  const start = location.hash.slice(1);
-  open(byId.has(start) ? start : 'q1-1', { scroll: byId.has(start) });
 })();
 </script>
 </body>
